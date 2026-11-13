@@ -11,7 +11,8 @@ async function api(token, action, data = {}) {
   const r = await fetch(`${base}/api/game`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action, code, token, ...data }) });
   return r.json();
 }
-const game = async () => (await fetch(`${base}/__db/games/${code}.json`)).json();
+const DB = base.includes('localhost') ? `${base}/__db` : 'https://viltjes-ravotters-default-rtdb.europe-west1.firebasedatabase.app';
+const game = async () => (await fetch(`${DB}/games/${code}.json`)).json();
 (async () => {
   const bots = [];
   for (let i = 0; i < Number(n); i++) {
