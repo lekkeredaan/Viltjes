@@ -1,7 +1,7 @@
 {
  "uitleg": "24 cartoons voor de laatste ronde van Viltjes. Elk plaatje = stijl + ' ' + prompt. Vierkant (1:1), zonder tekst of tekstwolkjes: het spel legt de wolkjes er zelf overheen. 'wolkjes' zegt wie er praat, in leesvolgorde.",
  "formaat": "1:1, minimaal 1024x1024",
- "stijl": "Single-panel comic book illustration in vintage pop-art style: bold black ink outlines, flat colours with Ben-Day halftone dot shading, slightly off-register print on cream paper. Strict limited palette: ultramarine blue, sunny yellow, bubblegum pink, cream white, black. Original characters only, not resembling any existing superhero. Recurring cast: CAPTAIN COASTER, a slightly chubby, overconfident male superhero in an ultramarine suit with a yellow cape, yellow eye mask and a plain round yellow disc on his chest; PINK PANIC, a sharp, unimpressed female superhero in a bubblegum pink suit with a pink eye mask and short black hair; DOCTOR FAKE, a clunky boxy retro robot villain with antenna, round eyes and a pink metal body. Cheeky and suggestive but fully clothed or covered, no nudity. Expressive faces, clear staging, readable at small size. Keep the top third of the image calm and uncluttered (plain background or sky) so speech bubbles can be added later. Absolutely no text, no letters, no numbers, no speech bubbles, no captions, no logos, no signature.",
+ "stijl": "Single-panel comic book illustration in vintage pop-art style: bold black ink outlines, flat colours with Ben-Day halftone dot shading, slightly off-register print on cream paper. Strict limited palette: ultramarine blue, sunny yellow, bubblegum pink, cream white, black. Original characters only, not resembling any existing superhero. Recurring cast: CAPTAIN COASTER, a slightly chubby, overconfident male superhero in an ultramarine suit with a yellow cape, yellow eye mask and a plain round yellow disc on his chest, short dark brown side-parted hair; PINK PANIC, a sharp, unimpressed female superhero in a bubblegum pink suit with a pink eye mask and short black hair; DOCTOR FAKE, a clunky boxy retro robot villain with antenna, round eyes and a pink metal body. Cheeky and suggestive but fully clothed or covered, no nudity. Expressive faces, clear staging, readable at small size. Keep the top third of the image calm and uncluttered (plain sky, plain wall or ceiling of the same scene) so speech bubbles can be added later; do not draw an empty caption box or a second panel, the scene fills the whole frame. Absolutely no text, no letters, no numbers, no speech bubbles, no captions, no logos, no signature.",
  "cartoons": [
   {
    "id": "c01",
@@ -321,5 +321,9 @@
     "ga rustig door, ik zag niks"
    ]
   }
+ ],
+ "klaar": [
+  "c01",
+  "c23"
  ]
 }
