@@ -4,6 +4,8 @@ process.env.VT_MEMORY = '1';
 const crypto = require('crypto');
 const assert = require('assert');
 const db = require('../lib/db');
+// Doe alsof alle meme-plaatjes klaar zijn, anders valt de meme-ronde weg
+const MEMES = require('../memes/memes.json'); if (!process.env.ZONDER_MEMES) MEMES.klaar = MEMES.memes.map(m => m.id);
 const { actions } = require('../api/game');
 const N = Number(process.argv[2] || 4), ROUNDS = Number(process.argv[3] || 5);
 const tok = () => crypto.randomBytes(16).toString('hex');
@@ -29,7 +31,7 @@ const names = ['Sanne', 'Ruben', 'Mila', 'Jesse', 'Fatima', 'Koen', 'Lotte', 'Da
     assert.equal(writers.length, cur.type === 'cartoon' ? N : N - 1);
     if (cur.type !== 'cartoon') await assert.rejects(actions.schrijf({ code, token: P.find(p => pid(p) === cur.reader).token, text: 'x' }), /leest/);
     for (const p of writers) {
-      if (cur.type === 'cartoon') await actions.schrijf({ code, token: p.token, lines: cur.prompt.wolkjes.map((w, i) => `${p.name} wolkje ${i + 1}`) });
+      if (cur.prompt.wolkjes) await actions.schrijf({ code, token: p.token, lines: cur.prompt.wolkjes.map((w, i) => `${p.name} wolkje ${i + 1}`) });
       else await actions.schrijf({ code, token: p.token, text: `antwoord van ${p.name}` });
     }
     g = G();

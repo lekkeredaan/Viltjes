@@ -10,6 +10,7 @@
    Een spel bestaat uit 3, 5 of 8 rondes. Soorten rondes:
    - gewoon:     schunnige opdracht, iedereen behalve de Voorlezer schrijft
    - achterkant: braaf antwoord, daarna schrijft een ander er de schunnige vraag bij
+   - meme:       bij 5 en 8 rondes, net voor de cartoon: tekst boven en onder een meme-plaatje
    - cartoon:    altijd de laatste ronde, telt dubbel, iedereen schrijft
    Fases: schrijf → (draai) → lees → stem → uitslag
    ══════════════════════════════════════════════════════════════ */
@@ -21,6 +22,11 @@ const CARTOON_DATA = require('../cartoons/cartoons.json');
 // Alleen cartoons waarvan het plaatje al klaar is (zolang niet alle 24 er zijn)
 const KLAAR = new Set(CARTOON_DATA.klaar || []);
 const CARTOONS = KLAAR.size ? CARTOON_DATA.cartoons.filter(c => KLAAR.has(c.id)) : CARTOON_DATA.cartoons;
+// Memes: alleen die met een klaar plaatje. Zijn er nog geen, dan wordt de meme-ronde een gewone ronde.
+const MEME_DATA = require('../memes/memes.json');
+const MEMES = MEME_DATA.memes.filter(m => (MEME_DATA.klaar || []).includes(m.id));
+const MEME_REGELS = ['Bovenste regel', 'Onderste regel'];
+const metRegels = type => type === 'cartoon' || type === 'meme';   // viltjes met losse regels i.p.v. één tekst
 
 const MIN_PLAYERS = 3, MAX_PLAYERS = 10;
 const CODE_API = process.env.VT_CODE_API || 'https://www.ravotters.nl/api/codes/verify';
@@ -29,8 +35,8 @@ const MAX_AI_GAMES_PER_DAY = Number(process.env.VT_MAX_AI_GAMES_PER_DAY || 400);
 const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const PLAN = {
   3: ['gewoon', 'achterkant', 'cartoon'],
-  5: ['gewoon', 'achterkant', 'gewoon', 'achterkant', 'cartoon'],
-  8: ['gewoon', 'gewoon', 'achterkant', 'gewoon', 'achterkant', 'gewoon', 'achterkant', 'cartoon'],
+  5: ['gewoon', 'achterkant', 'gewoon', 'meme', 'cartoon'],
+  8: ['gewoon', 'achterkant', 'gewoon', 'achterkant', 'gewoon', 'achterkant', 'meme', 'cartoon'],
 };
 // Seconden per fase
 const TIJD = { schrijf: 90, draai: 90, cartoon: 150, stem: 75 };
@@ -148,6 +154,10 @@ async function startRound(code, game, vault, n) {
     kaart = CARTOONS[vault.deck.cartoon % CARTOONS.length];
     prompt = { id: kaart.id, titel: kaart.titel, tekst: kaart.tekst, wolkjes: kaart.wolkjes };
     nep = kaart.nep;
+  } else if (type === 'meme') {
+    kaart = MEMES[vault.deck.meme % MEMES.length];
+    prompt = { id: kaart.id, titel: kaart.titel, tekst: kaart.tekst, wolkjes: MEME_REGELS, meme: true };
+    nep = kaart.nep;
   } else {
     const fresh = vault.aiPrompts?.[type] || [];
     if (count % 2 === 1 && fresh[(count - 1) / 2]) prompt = fresh[(count - 1) / 2];   // om en om een verse AI-opdracht
@@ -169,6 +179,7 @@ async function startRound(code, game, vault, n) {
   if (useAI(vault)) {
     try {
       const out = type === 'cartoon' ? { n, lines: await ai.cartoon(kaart) }
+        : type === 'meme' ? { n, lines: await ai.meme(kaart) }
         : type === 'gewoon' ? { n, front: await ai.antwoord(prompt) }
         : { n, front: await ai.voorkant(prompt) };
       await db.put(`${db.vaultPath(code)}/ai`, out);
@@ -179,7 +190,7 @@ async function startRound(code, game, vault, n) {
 // Wat de computer deze ronde op zijn viltje zet (AI als die op tijd was, anders de reserve)
 function aiFront(code, vault, type, n) {
   const fromAI = vault.ai && vault.ai.n === n ? vault.ai : null;
-  if (type === 'cartoon') return (fromAI?.lines) || vault.r.nep;
+  if (metRegels(type)) return (fromAI?.lines) || vault.r.nep;
   return fromAI?.front || vault.r.nep || pickFrom(type === 'gewoon' ? NEP_ANTWOORD : NEP_BRAAF, `${code}:${n}:nep`);
 }
 
@@ -215,7 +226,7 @@ async function closeWrite(code, game, vault) {
   const answers = vault.r?.answers || {};
   const humans = (cur.writers || []).filter(p => answers[p]);
   if (!humans.length) return toUitslagLeeg(code);
-  if (type === 'cartoon') {
+  if (metRegels(type)) {
     const entries = humans.map(p => ({ front: p, lines: answers[p] }));
     const all = humans.flatMap(p => answers[p]);
     entries.push({ front: 'ai', lines: aiFront(code, vault, type, n).map(t => blend(t, all)) });
@@ -311,7 +322,7 @@ async function closeVote(code, game, vault) {
   const result = { aiId, win, counts, wie, bon, snapped: snapped.map(p => nameOf(game, p)), fooled: fooled.map(p => nameOf(game, p)), gok, mult };
   const best = items.find(i => i.id === (win[0] || aiId)) || items[0];
   const hist = best ? {
-    type, vraag: type === 'achterkant' ? best.q : type === 'cartoon' ? cur.prompt.titel : cur.prompt,
+    type, vraag: type === 'achterkant' ? best.q : metRegels(type) ? cur.prompt.titel : cur.prompt,
     tekst: best.lines ? best.lines.join(' / ') : best.text,
     door: nameOf(game, makerOf(type, map[best.id])),
   } : null;
@@ -386,13 +397,14 @@ const actions = {
     const pids = order(game);
     need(pids.length >= MIN_PLAYERS, `Je hebt minstens ${MIN_PLAYERS} spelers nodig.`);
     need(!vault.accessExpiresAt || Date.now() < Date.parse(vault.accessExpiresAt), 'De toegangscode van deze tafel is verlopen. Open een nieuwe tafel.', 403);
-    const plan = PLAN[game.config?.rounds] || PLAN[5];
+    const plan = (PLAN[game.config?.rounds] || PLAN[5]).map(t => (t === 'meme' && !MEMES.length ? 'gewoon' : t));
     const day = today();
     const used = Number(await db.get(`${db.indexPath()}/daily/${day}`).catch(() => 0)) || 0;
     await db.put(`${db.indexPath()}/daily/${day}`, used + 1).catch(() => {});
     const deck = {
       gewoon: shuffle(GEWOON.map((_, i) => i)), achterkant: shuffle(ACHTERKANT.map((_, i) => i)),
       cartoon: Math.floor(Math.random() * CARTOONS.length),
+      meme: Math.floor(Math.random() * Math.max(1, MEMES.length)),
     };
     // Niet twee keer achter elkaar dezelfde cartoon aan dezelfde tafel
     if (vault.lastCartoon === deck.cartoon) deck.cartoon = (deck.cartoon + 1) % CARTOONS.length;
@@ -418,9 +430,9 @@ const actions = {
     need(game.status === 'playing' && cur?.phase === 'schrijf', 'Schrijven kan nu niet meer.');
     need((cur.writers || []).includes(pid), 'Jij leest deze ronde voor.');
     let val;
-    if (cur.type === 'cartoon') {
+    if (metRegels(cur.type)) {
       const lines = (Array.isArray(body.lines) ? body.lines : []).slice(0, cur.prompt.wolkjes.length).map(t => cleanText(t));
-      need(lines.length === cur.prompt.wolkjes.length && lines.every(t => t.length >= 1), 'Vul elk wolkje in.');
+      need(lines.length === cur.prompt.wolkjes.length && lines.every(t => t.length >= 1), cur.type === 'meme' ? 'Vul de bovenste en de onderste regel in.' : 'Vul elk wolkje in.');
       val = lines;
     } else {
       val = cleanText(body.text);

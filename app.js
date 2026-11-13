@@ -124,6 +124,7 @@ function itemHtml(it, { size = 150, kleur = 'wit', extra = '', tag = 'div', attr
 // Cartoon met tekstwolkjes erover. Het plaatje komt later; tot die tijd de beschrijving.
 function cartoonHtml(p, lines, klein) {
   if (!p) return '';
+  if (p.meme) return memeHtml(p, lines, klein);
   const n = p.wolkjes.length;
   const wolken = p.wolkjes.map((w, i) => {
     const t = lines ? lines[i] : null;
@@ -134,6 +135,16 @@ function cartoonHtml(p, lines, klein) {
     <div class="cartoon__leeg"><p>${esc(p.tekst)}</p></div>
     <img src="cartoons/${esc(p.id)}.webp" alt="" onerror="this.remove()">
     ${wolken}</div>`;
+}
+
+// Ouderwetse meme: witte blokletters met zwarte rand, boven en onder over het plaatje
+const memeSize = t => { const n = String(t || '').length; return n < 16 ? 1 : n < 28 ? .82 : n < 40 ? .68 : .58; };
+function memeHtml(p, lines, klein) {
+  const regel = (t, w, pos) => `<div class="meme__regel meme__regel--${pos}${t ? '' : ' meme__regel--leeg'}" style="--m:${memeSize(t)}">${t ? esc(t) : esc(w)}</div>`;
+  return `<div class="cartoon meme${klein ? ' cartoon--klein' : ''}" role="img" aria-label="${esc(p.tekst)}">
+    <div class="cartoon__leeg"><p>${esc(p.tekst)}</p></div>
+    <img src="memes/${esc(p.id)}.webp" alt="" onerror="this.remove()">
+    ${regel(lines?.[0], 'BOVEN', 'boven')}${regel(lines?.[1], 'ONDER', 'onder')}</div>`;
 }
 
 // ── Startscherm ───────────────────────────────────────────────────
@@ -295,7 +306,8 @@ function klok() {
 }
 setInterval(klok, 500);
 
-const SOORT = { gewoon: '', achterkant: 'De Achterkant', cartoon: 'De cartoon' };
+const SOORT = { gewoon: '', achterkant: 'De Achterkant', meme: 'De meme', cartoon: 'De cartoon' };
+const metRegels = t => t === 'cartoon' || t === 'meme';
 function wieKlaar(list) {
   const done = cur()?.done || {};
   return `<div class="wie-klaar">${list.map(p => `<span class="${done[p] ? 'klaar' : ''}">${esc(nameOf(p))}</span>`).join('')}</div>`;
@@ -339,6 +351,14 @@ function renderSchrijf(c, key) {
         html += c.prompt.wolkjes.map((w, i) => `<label class="veld">Wolkje ${c.prompt.wolkjes.length > 1 ? i + 1 + ' · ' : ''}${esc(w)}<input class="invoer invoer--pen" data-wolk="${i}" maxlength="70" autocomplete="off"></label>`).join('');
         html += `<div class="onder"><button id="lever" class="knop">Cartoon inleveren</button><p class="zacht klein">De computer vult er ook een in. Lijkt die van jou op die van een robot? Dat levert juist punten op.</p></div>`;
       }
+    } else if (c.type === 'meme') {
+      if (!schrijft) html += voorlezerBalk(`<b>Jij bent de Voorlezer.</b> Jij schrijft deze ronde niet. Straks lees je alle memes voor en gok je welke wint: goed gegokt is 2 punten.`);
+      else html += voorlezerBalk(`<b>${esc(lezer)}</b> is de Voorlezer en leest straks alle memes hardop voor.`);
+      html += `<h2 class="kop">Maak de meme</h2><div id="meme-voorbeeld">${cartoonHtml(c.prompt, ingeleverd ? priv?.mine : null)}</div>`;
+      if (schrijft && !ingeleverd) {
+        html += c.prompt.wolkjes.map((w, i) => `<label class="veld">${esc(w)}<input class="invoer invoer--pen" data-wolk="${i}" maxlength="50" autocomplete="off" placeholder="${i ? 'De clou' : 'Zet het op'}"></label>`).join('');
+        html += `<div class="onder"><button id="lever" class="knop">Meme inleveren</button><p class="zacht klein">De computer maakt er ook een. Lijkt die van jou op die van een robot? Dat levert juist punten op.</p></div>`;
+      }
     } else if (!schrijft) {
       html += voorlezerBalk(`<b>Jij bent de Voorlezer.</b> Lees de opdracht hardop voor. Straks lees je alle viltjes voor.`);
       html += opdrachtViltje(c.type === 'achterkant' ? c.prompt : c.prompt);
@@ -358,11 +378,16 @@ function renderSchrijf(c, key) {
     if (ingeleverd) html += `<div class="wacht"><b>Je viltje ligt op tafel.</b><span class="zacht">Wachten op de rest:</span><div id="klaar"></div></div>`;
     else if (!schrijft && c.type !== 'cartoon') html += `<div class="wacht"><span class="zacht">Wie heeft al geschreven:</span><div id="klaar"></div></div>`;
     setHtml('spel', html);
+    // Meme: live meekijken hoe je tekst op het plaatje komt
+    if (c.type === 'meme') document.querySelectorAll('[data-wolk]').forEach(inp => inp.oninput = () => {
+      const lines = [...document.querySelectorAll('[data-wolk]')].map(i => i.value.trim());
+      setHtml('meme-voorbeeld', cartoonHtml(c.prompt, lines));
+    });
     const btn = $('lever');
     if (btn) btn.onclick = () => busy(btn, async () => {
-      if (c.type === 'cartoon') {
+      if (metRegels(c.type)) {
         const lines = [...document.querySelectorAll('[data-wolk]')].map(i => i.value.trim());
-        if (lines.some(l => !l)) throw new Error('Vul elk wolkje in.');
+        if (lines.some(l => !l)) throw new Error(c.type === 'meme' ? 'Vul de bovenste en de onderste regel in.' : 'Vul elk wolkje in.');
         await api('schrijf', { lines });
         priv = { ...(priv || {}), mine: lines };
       } else {
@@ -444,7 +469,7 @@ function renderLees(c, key) {
     let html = voorlezerBalk(amReader()
       ? `<b>Lees voor.</b> Lees ${c.type === 'achterkant' ? 'eerst de vraag, draai het viltje om en lees dan het antwoord' : 'elk viltje hardop en met gevoel'}.`
       : `<b>${esc(nameOf(c.reader))} leest voor.</b> Kijk op van je scherm en luister.`);
-    if (c.type !== 'achterkant' && c.type !== 'cartoon') html += `<p class="kop" style="font-size:17px">${esc(c.prompt)}</p>`;
+    if (!metRegels(c.type) && c.type !== 'achterkant') html += `<p class="kop" style="font-size:17px">${esc(c.prompt)}</p>`;
     html += `<div style="display:flex;justify-content:center;padding:8px 0">${bigItem(it, c.om)}</div>`;
     html += `<p class="mono klein" style="text-align:center">VILTJE ${c.shown + 1} VAN ${items.length}</p>`;
     if (lezer) {
@@ -492,13 +517,13 @@ function renderStem(c, key) {
     return;
   }
   const stap = !vote.raak ? 1 : !vote.nep ? 2 : 3;
-  const vraag = c.type === 'cartoon' ? 'Welke cartoon is het grappigst?' : (c.type === 'achterkant' ? 'Welke vraag met antwoord is het grappigst?' : 'Welk viltje is het grappigst?');
+  const vraag = c.type === 'cartoon' ? 'Welke cartoon is het grappigst?' : c.type === 'meme' ? 'Welke meme is het grappigst?' : (c.type === 'achterkant' ? 'Welke vraag met antwoord is het grappigst?' : 'Welk viltje is het grappigst?');
   html += `<p class="stap">${stap === 1
     ? `<b>Stap 1 van 2:</b> ${gokker ? 'gok welk viltje gaat winnen. Klopt het, dan krijg je 2 punten.' : vraag} Tik erop.`
     : stap === 2 ? `<b>Stap 2 van 2:</b> welk viltje schreef de computer? Tik erop.`
     : `<b>Klaar?</b> RAAK en NEP? staan erop. Lever je stem in.`}</p>`;
-  if (c.type !== 'achterkant' && c.type !== 'cartoon') html += `<p class="kop" style="font-size:17px">${esc(c.prompt)}</p>`;
-  const alleen = items.length % 2 === 1 && c.type !== 'cartoon';
+  if (c.type !== 'achterkant' && !metRegels(c.type)) html += `<p class="kop" style="font-size:17px">${esc(c.prompt)}</p>`;
+  const alleen = items.length % 2 === 1 && !metRegels(c.type);
   html += `<div class="stemvak">${items.map((it, i) => {
     const eigen = it.id === mijn;
     const kleur = it.id === vote.raak ? 'zon' : 'wit';
@@ -507,7 +532,7 @@ function renderStem(c, key) {
     if (it.id === vote.nep) extra += stempel('NEP?', 'left:-8px;top:8px', -13);
     const cls = (alleen && i === items.length - 1 ? ' viltje--alleen' : '') + (eigen ? ' viltje--eigen' : '');
     const nr = eigen ? `${i + 1} · van jou` : `${i + 1}`;
-    if (it.lines) return itemHtml(it, { tag: eigen ? 'div' : 'button', attrs: `data-id="${it.id}" class="kaartje${cls}" aria-label="Cartoon ${i + 1}"`, extra, nr });
+    if (it.lines) return itemHtml(it, { tag: eigen ? 'div' : 'button', attrs: `data-id="${it.id}" class="kaartje${cls}" aria-label="${c.type === 'meme' ? 'Meme' : 'Cartoon'} ${i + 1}"`, extra, nr });
     return itemHtml(it, { size: 154, kleur, tag: eigen ? 'div' : 'button', attrs: `data-id="${it.id}"`, extra, nr }).replace('class="viltje ', `class="viltje${cls} `);
   }).join('')}</div>`;
   html += `<div class="onder">
@@ -552,7 +577,7 @@ function renderUitslag(c, key) {
     const nep = items.find(i => i.id === r.aiId);
     const wie = id => r.wie?.[id] || {};
     const door = id => c.type === 'achterkant' ? `${esc(wie(id).a)} (vraag) en ${esc(wie(id).v)} (antwoord)` : esc(wie(id).v);
-    if (c.type === 'cartoon') {
+    if (metRegels(c.type)) {
       if (win) html += `<p class="mono klein">RAAK · ${r.counts[win.id].r} ${r.counts[win.id].r === 1 ? 'STEM' : 'STEMMEN'} · ${door(win.id)}</p>${cartoonHtml(c.prompt, win.lines)}`;
       if (nep) html += `<p class="mono klein" style="margin-top:6px">NEP! DEZE WAS VAN DE COMPUTER</p>${cartoonHtml(c.prompt, nep.lines, true)}`;
     } else {

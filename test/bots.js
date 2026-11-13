@@ -32,7 +32,7 @@ const game = async () => (await fetch(`${DB}/games/${code}.json`)).json();
       const key = `${c.n}:${c.phase}`;
       if (b.did[key]) continue;
       if (c.phase === 'schrijf' && c.writers.includes(b.pid)) {
-        const r = c.type === 'cartoon' ? await api(b.token, 'schrijf', { lines: c.prompt.wolkjes.map(() => pick(ANT)) }) : await api(b.token, 'schrijf', { text: pick(ANT) });
+        const r = c.prompt.wolkjes ? await api(b.token, 'schrijf', { lines: c.prompt.wolkjes.map(() => pick(ANT)) }) : await api(b.token, 'schrijf', { text: pick(ANT) });
         b.did[key] = true; console.log(b.name, 'schreef', r.ok ? '' : r.error);
       } else if (c.phase === 'draai' && (c.writers2 || []).includes(b.pid)) {
         const r = await api(b.token, 'draai', { text: pick(VR) }); b.did[key] = true; console.log(b.name, 'draaide om', r.ok ? '' : r.error);

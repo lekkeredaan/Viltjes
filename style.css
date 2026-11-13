@@ -253,3 +253,15 @@ textarea.invoer { font: 700 25px/1.1 var(--hand); color: var(--pen); resize: non
 .flip__kant { color: var(--druk); }
 .cartoon--klein .cartoon__leeg p { display: none; }
 .kaartje { display: block; }
+
+/* Meme-ronde: ouderwetse blokletters, wit met zwarte rand */
+.meme__regel { position: absolute; left: 4%; right: 4%; text-align: center; text-transform: uppercase; color: #fff;
+  font: 400 calc(30px * var(--m, 1))/1.05 'Anton', Impact, 'Arial Narrow', sans-serif; letter-spacing: .5px; overflow-wrap: anywhere;
+  -webkit-text-stroke: 1.5px #000; paint-order: stroke fill;
+  text-shadow: 2px 2px 0 #000, -2px 2px 0 #000, 2px -2px 0 #000, -2px -2px 0 #000, 0 2px 0 #000, 2px 0 0 #000, 0 -2px 0 #000, -2px 0 0 #000; }
+.meme__regel--boven { top: 3%; }
+.meme__regel--onder { bottom: 3%; }
+.meme__regel--leeg { opacity: .45; }
+.cartoon--klein .meme__regel { font-size: calc(19px * var(--m, 1)); -webkit-text-stroke: 1px #000;
+  text-shadow: 1.5px 1.5px 0 #000, -1.5px 1.5px 0 #000, 1.5px -1.5px 0 #000, -1.5px -1.5px 0 #000; }
+.meme .cartoon__leeg { align-items: center; }
