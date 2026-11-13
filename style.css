@@ -194,11 +194,33 @@ textarea.invoer { font: 700 25px/1.1 var(--hand); color: var(--pen); resize: non
 .wie-schreef .pen { font-size: 22px; flex: 1; }
 
 /* Einde */
-.stapels { display: flex; justify-content: space-around; align-items: flex-end; min-height: 220px; border-bottom: 3px solid var(--inkt); padding: 0 4px; gap: 4px; }
-.stapel { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; max-width: 64px; }
-.stapel__vilt { width: 100%; max-width: 54px; height: 9px; border-radius: 50%; background: var(--vilt); box-shadow: 0 1px 0 var(--rand); animation: stapel .35s both; }
-@keyframes stapel { from { transform: translateY(-40px); opacity: 0; } }
-.stapel__score { font: 400 18px var(--slab); }
+.stapels { display: flex; justify-content: space-around; align-items: flex-end; min-height: 250px; border-bottom: 3px solid var(--inkt); padding: 0 4px 2px; gap: 4px; }
+.stapel { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; max-width: 64px; }
+.stapel__score { font: 400 18px var(--slab); min-width: 2ch; text-align: center; transition: transform .3s; }
+.stapel__toren { display: flex; flex-direction: column-reverse; align-items: center; width: 100%; }
+/* Eén viltje van opzij: bovenkant + dikke kartonnen rand, en ze liggen echt op elkaar */
+.schijf { position: relative; width: 100%; max-width: 54px; height: 17px; flex: none; background: var(--vilt); border: 1.5px solid var(--rand);
+  box-shadow: 0 4px 0 #D9CBA8, 0 5px 0 #BFAE87, 0 7px 5px rgba(60,45,15,.16); transform: translateX(var(--x, 0)); transition: background .4s; }
+.schijf + .schijf { margin-bottom: -8px; }
+.schijf--rond, .schijf--schulp { border-radius: 50%; }
+.schijf--vier { border-radius: 9px / 6px; }
+.schijf--acht { border-radius: 14px / 7px; }
+.schijf--schulp { background-image: radial-gradient(circle at 50% 50%, transparent 58%, rgba(196,187,232,.55) 60%, transparent 63%); }
+.schijf--val { animation: val .5s both; }
+@keyframes val {
+  0%   { transform: translate(var(--x, 0), -280px) rotate(-9deg); opacity: 0; animation-timing-function: cubic-bezier(.55, 0, .9, .4); }
+  12%  { opacity: 1; }
+  72%  { transform: translate(var(--x, 0), 0) rotate(0); animation-timing-function: ease-out; }
+  86%  { transform: translate(var(--x, 0), -5px) rotate(1deg); animation-timing-function: ease-in; }
+  100% { transform: translate(var(--x, 0), 0) rotate(0); }
+}
+.stapel--winnaar .schijf { background-color: var(--zon); border-color: #C99A10; }
+.stapel--winnaar .stapel__score { background: var(--zon); padding: 0 8px; border-radius: 6px; transform: scale(1.15); }
+.stapel--winnaar .stapel__toren { animation: juich .6s .1s both; }
+@keyframes juich { 30% { transform: translateY(-14px); } 55% { transform: translateY(0); } 75% { transform: translateY(-5px); } }
+.stapels--klaar .stapel:not(.stapel--winnaar) { opacity: .75; }
+.na-stapels { display: flex; flex-direction: column; gap: 14px; animation: opkomen .5s both; }
+@keyframes opkomen { from { opacity: 0; transform: translateY(12px); } }
 .stapel-namen { display: flex; justify-content: space-around; gap: 4px; margin-top: -8px; }
 .stapel-namen span { flex: 1; max-width: 64px; text-align: center; font-size: 13px; font-weight: 700; color: var(--tekst); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .prijzen { display: flex; flex-direction: column; gap: 8px; }
@@ -222,7 +244,7 @@ textarea.invoer { font: 700 25px/1.1 var(--hand); color: var(--pen); resize: non
 .toast.bad { background: #B0123F; }
 
 @media (prefers-reduced-motion: reduce) {
-  .gooi, .land, .stempel, .stapel__vilt { animation: none; transform: rotate(var(--r, 0)); }
+  .gooi, .land, .stempel, .schijf--val, .stapel--winnaar .stapel__toren, .na-stapels { animation: none; transform: rotate(var(--r, 0)); }
   .flip__binnen { transition: none; }
 }
 

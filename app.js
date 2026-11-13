@@ -579,19 +579,74 @@ function renderUitslag(c, key) {
 }
 
 // ── Eindstand ─────────────────────────────────────────────────────
+// De stapels groeien tegelijk, viltje voor viltje. Ze staan in de volgorde waarin
+// iedereen aanschoof, dus pas aan het eind zie je wie er wint.
+let eindeKey = '', eindeTimer = null;
+const VORMEN_STAPEL = ['rond', 'vier', 'acht', 'schulp'];
+function viltSchijf(i, k) {
+  // Kleine verschuiving per viltje, zodat het een echte, net niet rechte stapel is
+  const r = Math.sin((i + 1) * 12.9898 + (k + 1) * 78.233) * 43758.5453;
+  const x = Math.round(((r - Math.floor(r)) * 8 - 4) * 10) / 10;
+  return `<div class="schijf schijf--${VORMEN_STAPEL[(i + k) % 4]}" style="--x:${x}px;z-index:${k + 1}"></div>`;
+}
 function renderEinde() {
-  const ps = players().map(([pid, p]) => ({ pid, name: p.name, score: game.scores?.[pid] || 0, st: game.stats?.[pid] || {} }))
-    .sort((a, b) => b.score - a.score);
-  const top = ps[0];
+  const ps = players().map(([pid, p]) => ({ pid, name: p.name, score: game.scores?.[pid] || 0, st: game.stats?.[pid] || {} }));
+  const top = Math.max(0, ...ps.map(p => p.score));
+  const winners = ps.filter(p => p.score === top);
+  const finalKop = !ps.length ? '' : winners.length > 1
+    ? `Gelijkspel: ${winners.map(w => w.pid === me.pid ? 'jij' : w.name).join(' en ')}`
+    : `${winners[0].pid === me.pid ? 'Jij hebt' : winners[0].name + ' heeft'} de hoogste stapel`;
   $('einde-sub').textContent = `EINDSTAND NA ${game.plan?.length || ''} RONDES`;
-  $('einde-kop').textContent = top ? (ps[1] && ps[1].score === top.score ? 'Gelijkspel aan de top' : `${top.name} heeft de hoogste stapel`) : '';
-  const max = Math.max(1, ...ps.map(p => p.score));
-  const kleur = i => i === 0 ? 'background:#FFCB2E' : i === 1 ? 'background:#2430C8' : '';
-  setHtml('stapels', ps.map((p, i) => {
-    const n = Math.max(1, Math.round(p.score / max * 14));
-    return `<div class="stapel"><span class="stapel__score">${p.score}</span>${Array.from({ length: n }, (_, k) => `<div class="stapel__vilt" style="${kleur(i)};animation-delay:${(n - k) * 60 + i * 120}ms"></div>`).join('')}</div>`;
-  }).join(''));
   setHtml('stapel-namen', ps.map(p => `<span>${esc(p.pid === me.pid ? 'Jij' : p.name)}</span>`).join(''));
+
+  // Hoeveel punten is één viltje? Zo blijft de hoogste stapel rond de 15 viltjes.
+  const per = Math.max(1, Math.ceil(top / 15));
+  const n = ps.map(p => Math.max(p.score > 0 ? 1 : 0, Math.round(p.score / per)));
+  const steps = Math.max(0, ...n);
+  const key = `${code}:${game.doneAt || ''}:${ps.map(p => p.score).join(',')}`;
+  const klaar = () => {
+    $('einde-kop').textContent = finalKop;
+    document.querySelectorAll('#stapels .stapel').forEach((el, i) => {
+      el.classList.toggle('stapel--winnaar', ps[i].score === top && top > 0);
+      el.querySelector('.stapel__score').textContent = ps[i].score;
+    });
+    $('stapels').classList.add('stapels--klaar');
+    $('na-stapels').hidden = false;
+  };
+  if (key === eindeKey) return renderRest(ps);
+  eindeKey = key;
+  clearTimeout(eindeTimer);
+  $('na-stapels').hidden = true;
+  $('stapels').classList.remove('stapels--klaar');
+  $('einde-kop').textContent = 'Wie heeft de hoogste stapel?';
+  setHtml('stapels', ps.map(() => `<div class="stapel"><span class="stapel__score">0</span><div class="stapel__toren"></div></div>`).join(''));
+  renderRest(ps);
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const torens = [...document.querySelectorAll('#stapels .stapel__toren')];
+  const scores = [...document.querySelectorAll('#stapels .stapel__score')];
+  if (reduce) {
+    torens.forEach((t, i) => { t.innerHTML = Array.from({ length: n[i] }, (_, k) => viltSchijf(i, k)).join(''); });
+    return klaar();
+  }
+  let k = 0;
+  const stap = () => {
+    if (key !== eindeKey) return;
+    if (k >= steps) { eindeTimer = setTimeout(klaar, 700); return; }
+    torens.forEach((t, i) => {
+      if (k < n[i]) {
+        t.insertAdjacentHTML('beforeend', viltSchijf(i, k).replace('class="schijf', 'class="schijf schijf--val'));
+        scores[i].textContent = Math.min(ps[i].score, (k + 1) * per);
+        if (k === n[i] - 1) scores[i].textContent = ps[i].score;
+      }
+    });
+    k++;
+    // Steeds sneller, en de laatste paar viltjes juist langzaam: spanning
+    const left = steps - k;
+    eindeTimer = setTimeout(stap, left <= 2 ? 900 : left <= 4 ? 520 : Math.max(150, 330 - k * 15));
+  };
+  eindeTimer = setTimeout(stap, 900);
+}
+function renderRest(ps) {
   const besteIn = k => { const b = [...ps].sort((a, z) => (z.st[k] || 0) - (a.st[k] || 0))[0]; return b && b.st[k] > 0 ? b : null; };
   const lach = besteIn('raak'), jager = besteIn('snap'), bluf = besteIn('bluf');
   setHtml('prijzen', [
