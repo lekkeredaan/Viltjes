@@ -17,7 +17,10 @@
 const db = require('../lib/db');
 const ai = require('../lib/ai');
 const { GEWOON, ACHTERKANT, NEP_ACHTERKANT, NEP_ANTWOORD } = require('../lib/content');
-const CARTOONS = require('../cartoons/cartoons.json').cartoons;
+const CARTOON_DATA = require('../cartoons/cartoons.json');
+// Alleen cartoons waarvan het plaatje al klaar is (zolang niet alle 24 er zijn)
+const KLAAR = new Set(CARTOON_DATA.klaar || []);
+const CARTOONS = KLAAR.size ? CARTOON_DATA.cartoons.filter(c => KLAAR.has(c.id)) : CARTOON_DATA.cartoons;
 
 const MIN_PLAYERS = 3, MAX_PLAYERS = 10;
 const CODE_API = process.env.VT_CODE_API || 'https://www.ravotters.nl/api/codes/verify';
