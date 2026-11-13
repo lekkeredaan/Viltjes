@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Viltjes · een terrasspel van Ravotters</title>
+<meta name="description" content="Schrijf iets schunnigs op je viltje. Eén viltje is nep. Een terrasspel van Ravotters voor 3 tot 10 spelers, alleen telefoons nodig. 18+.">
+<meta name="theme-color" content="#F6EFDF">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%232430C8'/%3E%3Ccircle cx='32' cy='32' r='25' fill='none' stroke='%23FFCB2E' stroke-width='2.5'/%3E%3Ctext x='32' y='42' font-family='Georgia,serif' font-weight='900' font-size='30' text-anchor='middle' fill='%23FAF5EA'%3EV%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Caveat:wght@700&family=Courier+Prime:wght@400;700&family=Figtree:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<svg class="korrel" aria-hidden="true"><filter id="korrel"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2"/><feColorMatrix values="0 0 0 0 0.55 0 0 0 0 0.45 0 0 0 0 0.3 0 0 0 0.25 0"/></filter><rect width="100%" height="100%" filter="url(#korrel)"/></svg>
+<div class="kring kring--1" aria-hidden="true"></div>
+<div class="kring kring--2" aria-hidden="true"></div>
+
+<!-- Iconen: lijntekeningen, geen emoji -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-voorlezer" viewBox="0 0 24 24"><path d="M3 10v4h3l7 4V6L6 10H3z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></symbol>
+    <symbol id="i-robot" viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="11" rx="3"/><path d="M12 4v4"/><circle cx="9.5" cy="13" r="1.2"/><circle cx="14.5" cy="13" r="1.2"/><path d="M10 16.5h4M3 12v3M21 12v3"/></symbol>
+    <symbol id="i-lach" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14a4.5 4.5 0 0 0 8 0z"/><path d="M9 9.5h.01M15 9.5h.01"/></symbol>
+    <symbol id="i-tijd" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M10 2h4"/></symbol>
+    <symbol id="i-pijl" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-terug" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+    <symbol id="i-draai" viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/></symbol>
+    <symbol id="i-vink" viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></symbol>
+  </defs>
+</svg>
+
+<!-- ═══════════ 18+ ═══════════ -->
+<div id="leeftijd" class="poort" hidden>
+  <div class="poort__kaart">
+    <h2 class="kop">Viltjes is schunnig</h2>
+    <p>Dubbelzinnige vragen, foute antwoorden. Dit spel is voor volwassenen.</p>
+    <button id="leeftijd-ja" class="knop">Ik ben 18 of ouder</button>
+    <a class="knop knop--rand" href="https://www.ravotters.nl">Nee, terug naar Ravotters</a>
+  </div>
+</div>
+
+<!-- ═══════════ START ═══════════ -->
+<section id="s-home" class="screen screen--active">
+  <div class="gooi-tafel" aria-hidden="true">
+    <div class="vt gooi" style="left:6px;top:26px;width:142px;height:142px;--fx:-220px;--fy:330px;--r:-13deg;animation-delay:.55s" data-vorm="vier" data-fill="#FFCB2E" data-ink="#2430C8"><span class="vt__in slab" style="font-size:34px">18+</span></div>
+    <div class="vt gooi" style="left:204px;top:2px;width:136px;height:136px;--fx:240px;--fy:300px;--r:10deg;animation-delay:.95s" data-vorm="schulp" data-fill="#FF8FB8" data-ink="#2430C8"><svg class="vt__in ico-groot" aria-hidden="true"><use href="#i-robot"/></svg></div>
+    <div class="vt gooi" style="left:214px;top:164px;width:128px;height:128px;--fx:200px;--fy:200px;--r:-7deg;animation-delay:1.35s" data-vorm="acht"><span class="vt__in pen" style="font-size:25px;transform:rotate(-4deg)">Dat past<br>nooit.</span></div>
+    <div class="vt land" style="left:52px;top:78px;width:214px;height:214px;--r:-4deg" data-vorm="logo"><span class="vt__in slab logo-woord">Viltjes</span></div>
+  </div>
+  <h1 class="kop kop--groot">Schrijf iets schunnigs. Eén viltje is nep.</h1>
+  <p class="zacht">Voor 3 tot 10 spelers aan één tafel. Alleen je telefoon nodig.</p>
+
+  <div id="resume-box" class="briefje" hidden>
+    <div><b>Je zat nog aan tafel</b><div id="resume-what" class="zacht"></div></div>
+    <div class="rij"><button id="resume-ja" class="knop knop--klein">Terug aan tafel</button><button id="resume-nee" class="knop knop--klein knop--rand">Nee</button></div>
+  </div>
+
+  <div class="formulier">
+    <label class="veld">Je naam<input id="naam" class="invoer invoer--pen" maxlength="14" autocomplete="nickname" placeholder="Je naam"></label>
+    <div class="rij rij--onder">
+      <label class="veld veld--groei">Tafelcode<input id="tafelcode" class="invoer invoer--code" maxlength="6" autocapitalize="characters" autocomplete="off" placeholder="K7RZ2M"></label>
+      <button id="aanschuiven" class="knop">Schuif aan</button>
+    </div>
+    <button id="open-tafel" class="knop knop--rand">Open zelf een tafel</button>
+    <div id="open-box" class="openbox" hidden>
+      <label class="veld">Toegangscode<input id="toegang" class="invoer invoer--code" maxlength="40" autocapitalize="characters" autocomplete="off" placeholder="Code uit je mail"></label>
+      <button id="open-ja" class="knop">Tafel openen</button>
+      <p class="zacht klein">Nog geen code? <a href="https://www.ravotters.nl/viltjes">Koop Viltjes op ravotters.nl</a>. Aanschuiven bij iemand anders is gratis.</p>
+    </div>
+    <p id="home-fout" class="fout" hidden></p>
+  </div>
+</section>
+
+<!-- ═══════════ LOBBY ═══════════ -->
+<section id="s-lobby" class="screen">
+  <div class="codeblok">
+    <span class="mono klein">TAFELCODE</span>
+    <span id="lobby-code" class="codeblok__code"></span>
+    <span class="klein">Lees hem voor of draai je scherm naar de tafel</span>
+  </div>
+  <div id="lobby-tafel" class="ronde-tafel"></div>
+  <div id="lobby-host" hidden>
+    <span class="label">Aantal rondes</span>
+    <div class="rij" id="rondes">
+      <button class="pil" data-r="3">3</button><button class="pil" data-r="5">5</button><button class="pil" data-r="8">8</button>
+    </div>
+    <p class="zacht klein">De laatste ronde is altijd: maak de cartoon af. Die telt dubbel.</p>
+  </div>
+  <p id="lobby-wacht" class="zacht" hidden>Wacht tot <b id="lobby-hostnaam"></b> het spel start.</p>
+  <div class="onder">
+    <button id="start" class="knop" hidden>Start het spel</button>
+    <p id="start-uitleg" class="zacht klein"></p>
+    <button id="weg" class="tekstknop" hidden>Toch niet meedoen</button>
+  </div>
+</section>
+
+<!-- ═══════════ SPEL ═══════════ -->
+<section id="s-spel" class="screen">
+  <div class="balk">
+    <span id="ronde-nr" class="mono klein"></span>
+    <span id="klok" class="klok mono" hidden><svg class="ico" aria-hidden="true"><use href="#i-tijd"/></svg><span></span></span>
+  </div>
+  <div id="spel"></div>
+</section>
+
+<!-- ═══════════ EINDE ═══════════ -->
+<section id="s-einde" class="screen">
+  <span class="mono klein" id="einde-sub"></span>
+  <h1 class="kop kop--groot" id="einde-kop"></h1>
+  <div id="stapels" class="stapels"></div>
+  <div id="stapel-namen" class="stapel-namen"></div>
+  <div id="prijzen" class="prijzen"></div>
+  <details class="terug">
+    <summary class="knop knop--rand">Alle winnende viltjes teruglezen</summary>
+    <div id="hist"></div>
+  </details>
+  <div class="onder">
+    <button id="opnieuw" class="knop" hidden>Nog een potje</button>
+    <p id="opnieuw-wacht" class="zacht klein" hidden>Wie de tafel opende kan een nieuw potje starten.</p>
+    <button id="naar-huis" class="tekstknop">Van tafel gaan</button>
+  </div>
+</section>
+
+<div id="toast" class="toast" role="status" hidden></div>
+<script src="app.js"></script>
+</body>
+</html>

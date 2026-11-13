@@ -1,0 +1,26 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "games": {
+      "$code": {
+        ".read": "$code.length === 6",
+        ".write": "$code.length === 6"
+      }
+    },
+    "vault": {
+      "$code": {
+        "$key": {
+          ".read": "$key.length === 64",
+          ".write": "$key.length === 64"
+        }
+      }
+    },
+    "index": {
+      "$key": {
+        ".read": "$key.length === 64",
+        ".write": "$key.length === 64"
+      }
+    }
+  }
+}

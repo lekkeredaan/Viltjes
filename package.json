@@ -1,0 +1,9 @@
+{
+  "name": "viltjes",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Viltjes: schunnig terrasspel met alleen telefoons. Schrijf, stem en ontmasker de computer (Ravotters).",
+  "scripts": { "dev": "node dev-server.js", "test": "node test/sim.js" },
+  "engines": { "node": ">=20" },
+  "dependencies": { "@anthropic-ai/sdk": "^1.8.0" }
+}

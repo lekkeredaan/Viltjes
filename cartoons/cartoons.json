@@ -1,0 +1,325 @@
+{
+ "uitleg": "24 cartoons voor de laatste ronde van Viltjes. Elk plaatje = stijl + ' ' + prompt. Vierkant (1:1), zonder tekst of tekstwolkjes: het spel legt de wolkjes er zelf overheen. 'wolkjes' zegt wie er praat, in leesvolgorde.",
+ "formaat": "1:1, minimaal 1024x1024",
+ "stijl": "Single-panel comic book illustration in vintage pop-art style: bold black ink outlines, flat colours with Ben-Day halftone dot shading, slightly off-register print on cream paper. Strict limited palette: ultramarine blue, sunny yellow, bubblegum pink, cream white, black. Original characters only, not resembling any existing superhero. Recurring cast: CAPTAIN COASTER, a slightly chubby, overconfident male superhero in an ultramarine suit with a yellow cape, yellow eye mask and a plain round yellow disc on his chest; PINK PANIC, a sharp, unimpressed female superhero in a bubblegum pink suit with a pink eye mask and short black hair; DOCTOR FAKE, a clunky boxy retro robot villain with antenna, round eyes and a pink metal body. Cheeky and suggestive but fully clothed or covered, no nudity. Expressive faces, clear staging, readable at small size. Keep the top third of the image calm and uncluttered (plain background or sky) so speech bubbles can be added later. Absolutely no text, no letters, no numbers, no speech bubbles, no captions, no logos, no signature.",
+ "cartoons": [
+  {
+   "id": "c01",
+   "titel": "Cape tussen de wc-deur",
+   "wolkjes": [
+    "Captain Coaster"
+   ],
+   "prompt": "Captain Coaster stands outside a cafe toilet door with his yellow cape firmly trapped in the closed door, pulling at it and sweating, while a queue of amused cafe guests watches him.",
+   "tekst": "Captain Coaster staat voor de wc-deur van het café. Zijn cape zit klem tussen de deur. De hele rij kijkt toe.",
+   "nep": [
+    "dit is niet wat het lijkt, ik zit alleen een beetje vast"
+   ]
+  },
+  {
+   "id": "c02",
+   "titel": "De ochtend erna",
+   "wolkjes": [
+    "Pink Panic",
+    "Captain Coaster"
+   ],
+   "prompt": "Morning light in a messy bedroom. Captain Coaster and Pink Panic sit up in the same bed with the blanket pulled up to their chins, both still wearing their eye masks, staring ahead in shock. Boots, a cape and gloves are scattered over the floor.",
+   "tekst": "Ochtend. Captain Coaster en Pink Panic zitten rechtop in hetzelfde bed, dekbed tot aan de kin, maskers nog op. Overal liggen laarzen en capes.",
+   "nep": [
+    "zeg dat we alleen de wereld hebben gered",
+    "volgens mij twee keer zelfs"
+   ]
+  },
+  {
+   "id": "c03",
+   "titel": "Bij de apotheek",
+   "wolkjes": [
+    "Apotheker",
+    "Captain Coaster"
+   ],
+   "prompt": "Captain Coaster at a pharmacy counter, nervously sliding a very small plain box across the counter while looking away. The elderly female pharmacist holds up the box and raises one eyebrow. Other customers lean in to look.",
+   "tekst": "Bij de apotheek. Captain Coaster schuift een heel klein doosje over de toonbank. De apotheker trekt een wenkbrauw op.",
+   "nep": [
+    "hebben we deze ook in maatje held?",
+    "het is voor een vriend"
+   ]
+  },
+  {
+   "id": "c04",
+   "titel": "Betrapt in haar laarzen",
+   "wolkjes": [
+    "Pink Panic",
+    "Captain Coaster"
+   ],
+   "prompt": "Captain Coaster admires himself in a bedroom mirror while wearing Pink Panic's pink high-heeled boots that are clearly too small. Pink Panic stands in the doorway with crossed arms, catching him.",
+   "tekst": "Captain Coaster bewondert zichzelf in de spiegel, op de roze hakken van Pink Panic. Zij staat in de deuropening.",
+   "nep": [
+    "hoe lang doe jij dit al",
+    "ze knellen wel lekker"
+   ]
+  },
+  {
+   "id": "c05",
+   "titel": "Date met een broodrooster",
+   "wolkjes": [
+    "Doctor Fake"
+   ],
+   "prompt": "Doctor Fake the robot sits at a romantic candlelit cafe terrace table, gazing lovingly at a chrome toaster placed on the chair opposite him. He offers the toaster a rose. A waiter in the background looks confused.",
+   "tekst": "Doctor Fake, de robot, zit bij kaarslicht op het terras en kijkt verliefd naar een broodrooster op de stoel tegenover hem.",
+   "nep": [
+    "zeg het maar als ik te hard van stapel loop"
+   ]
+  },
+  {
+   "id": "c06",
+   "titel": "Gescheurd pak",
+   "wolkjes": [
+    "Omstander"
+   ],
+   "prompt": "Captain Coaster heroically lifts a small car above his head on a city street, seen from behind, with a big rip in the seat of his suit revealing boxer shorts with yellow hearts. A crowd of bystanders stares, one old lady covers a child's eyes.",
+   "tekst": "Captain Coaster tilt een auto boven zijn hoofd. Zijn pak is van achteren opengescheurd. De hele straat kijkt.",
+   "nep": [
+    "mam, die meneer heeft hartjes op zijn kont"
+   ]
+  },
+  {
+   "id": "c07",
+   "titel": "In de sauna",
+   "wolkjes": [
+    "Oude man",
+    "Captain Coaster"
+   ],
+   "prompt": "A wooden sauna full of steam. Captain Coaster sits on the bench wearing only a towel around his waist, his eye mask and his cape. Next to him a wrinkled old man in a towel looks him up and down, unimpressed.",
+   "tekst": "In de sauna. Captain Coaster draagt alleen een handdoek, zijn masker en zijn cape. Een oude man bekijkt hem van top tot teen.",
+   "nep": [
+    "is dat alles?",
+    "de cape maakt het af toch"
+   ]
+  },
+  {
+   "id": "c08",
+   "titel": "Ongemakkelijke redding",
+   "wolkjes": [
+    "Pink Panic",
+    "Captain Coaster"
+   ],
+   "prompt": "Captain Coaster flies through the sky carrying Pink Panic in his arms in a classic rescue pose, grinning proudly. Pink Panic glares at him with a raised eyebrow and points down at where his hand is holding her hip.",
+   "tekst": "Captain Coaster vliegt met Pink Panic in zijn armen. Zij kijkt naar waar zijn hand zit.",
+   "nep": [
+    "je hand",
+    "ik hou je alleen stevig vast"
+   ]
+  },
+  {
+   "id": "c09",
+   "titel": "Wasserette",
+   "wolkjes": [
+    "Oma",
+    "Captain Coaster"
+   ],
+   "prompt": "A laundromat. Captain Coaster sits on a bench in boxer shorts with yellow hearts, socks, eye mask and cape, reading a magazine while his blue suit spins in a washing machine. An old lady with a laundry basket stares at him.",
+   "tekst": "Wasserette. Captain Coaster zit in zijn boxer met hartjes te wachten tot zijn enige pak klaar is. Een oma staart.",
+   "nep": [
+    "jongeman, heeft u maar één broek?",
+    "ja maar wel een goeie"
+   ]
+  },
+  {
+   "id": "c10",
+   "titel": "Vastgebonden",
+   "wolkjes": [
+    "Doctor Fake",
+    "Captain Coaster"
+   ],
+   "prompt": "Inside a villain lair, Captain Coaster is tied to a chair with thick rope and looks suspiciously pleased and relaxed. Doctor Fake the robot stands in front of him holding the end of the rope, looking puzzled and uncomfortable.",
+   "tekst": "Het hol van de schurk. Captain Coaster zit vastgebonden op een stoel en lijkt het verdacht fijn te vinden. Doctor Fake snapt er niks van.",
+   "nep": [
+    "waarom lach jij zo",
+    "mag het iets strakker"
+   ]
+  },
+  {
+   "id": "c11",
+   "titel": "Stiekem weg bij zonsopgang",
+   "wolkjes": [
+    "Buurman"
+   ],
+   "prompt": "Sunrise in a suburban street. Captain Coaster climbs out of a first-floor bedroom window with his boots in his hand and his cape caught on the window frame. On the pavement a neighbour in a bathrobe walking a small dog watches him.",
+   "tekst": "Zonsopgang. Captain Coaster klimt met zijn laarzen in de hand uit een slaapkamerraam. De buurman laat net de hond uit.",
+   "nep": [
+    "goeiemorgen, weer een kat gered zeker?"
+   ]
+  },
+  {
+   "id": "c12",
+   "titel": "Bij de dokter",
+   "wolkjes": [
+    "Dokter",
+    "Captain Coaster"
+   ],
+   "prompt": "A doctor's office. A doctor in a white coat holds an X-ray up to the light with a shocked face; the X-ray faces away from the viewer. Captain Coaster sits on the examination table in a hospital gown, eye mask and cape, grinning sheepishly.",
+   "tekst": "Bij de dokter. De dokter houdt geschrokken een röntgenfoto tegen het licht. Captain Coaster grijnst schaapachtig.",
+   "nep": [
+    "hoe krijgt u dat erin",
+    "het was een weddenschap"
+   ]
+  },
+  {
+   "id": "c13",
+   "titel": "Meelezen",
+   "wolkjes": [
+    "Captain Coaster"
+   ],
+   "prompt": "At a bar counter, Pink Panic smiles at her phone, which faces away from the viewer. Captain Coaster leans far over her shoulder to peek at the screen, eyes wide, spilling his beer.",
+   "tekst": "Aan de bar. Pink Panic lacht om iets op haar telefoon. Captain Coaster hangt over haar schouder om mee te lezen en morst zijn bier.",
+   "nep": [
+    "wie is Dikke Beer en waarom drie hartjes"
+   ]
+  },
+  {
+   "id": "c14",
+   "titel": "Moeder komt binnen",
+   "wolkjes": [
+    "Moeder",
+    "Captain Coaster"
+   ],
+   "prompt": "Captain Coaster's old mother, in an apron and tiny yellow eye mask, bursts into his bedroom carrying a laundry basket. Captain Coaster sits in bed in a panic, hastily hiding something under the blanket, cheeks red.",
+   "tekst": "De moeder van Captain Coaster stormt met de wasmand zijn slaapkamer binnen. Hij verstopt snel iets onder het dekbed.",
+   "nep": [
+    "wat ligt daar onder dat dekbed?",
+    "niks mam, gewoon mijn reservecape"
+   ]
+  },
+  {
+   "id": "c15",
+   "titel": "Klem in het raam",
+   "wolkjes": [
+    "Brandweerman"
+   ],
+   "prompt": "Captain Coaster is stuck halfway through a small bathroom window of a house, his legs and behind sticking out on the outside. A firefighter on a ladder scratches his head and inspects the situation, a second firefighter below is laughing.",
+   "tekst": "Captain Coaster zit klem in een badkamerraampje. Alleen zijn benen en achterwerk steken naar buiten. De brandweer bekijkt het.",
+   "nep": [
+    "nou jongens, dit wordt weer smeren"
+   ]
+  },
+  {
+   "id": "c16",
+   "titel": "Samen in het pashokje",
+   "wolkjes": [
+    "Pink Panic",
+    "Captain Coaster"
+   ],
+   "prompt": "Captain Coaster and Pink Panic are squeezed together inside one tiny changing cubicle with the curtain half open, both trying to pull on their costumes at the same time, limbs tangled, faces pressed together and annoyed.",
+   "tekst": "Captain Coaster en Pink Panic proberen zich tegelijk om te kleden in één piepklein pashokje.",
+   "nep": [
+    "dat is mijn been niet",
+    "sorry, ik dacht dat het een haakje was"
+   ]
+  },
+  {
+   "id": "c17",
+   "titel": "Stoer drankje",
+   "wolkjes": [
+    "Captain Coaster"
+   ],
+   "prompt": "In a rough biker bar, a bartender slides Captain Coaster an enormous pink cocktail with a paper umbrella, a sparkler and fruit. Captain Coaster reaches for it with delight while three tough leather-clad bikers stare at him.",
+   "tekst": "Een bikerbar. Captain Coaster krijgt een enorme roze cocktail met parasolletje en sterretje. Drie bikers kijken toe.",
+   "nep": [
+    "doe er voor de jongens ook maar zo een"
+   ]
+  },
+  {
+   "id": "c18",
+   "titel": "Robot na afloop",
+   "wolkjes": [
+    "Doctor Fake"
+   ],
+   "prompt": "Doctor Fake the robot lies in bed under a blanket looking very satisfied, hands behind his head. Next to him under the same blanket lies a vacuum cleaner, its hose draped over him. A lamp is knocked over on the bedside table.",
+   "tekst": "Doctor Fake ligt heel tevreden in bed, handen achter zijn hoofd. Naast hem onder het dekbed: een stofzuiger.",
+   "nep": [
+    "je moet weten dat ik dit normaal nooit doe"
+   ]
+  },
+  {
+   "id": "c19",
+   "titel": "Bij de kleermaker",
+   "wolkjes": [
+    "Kleermaker",
+    "Captain Coaster"
+   ],
+   "prompt": "A tailor's workshop. Captain Coaster stands proudly on a small podium with arms spread. A small elderly tailor kneels in front of him holding a measuring tape along his inseam, looking up over his glasses with a doubtful expression.",
+   "tekst": "Bij de kleermaker. Captain Coaster staat trots op het krukje. De kleermaker meet de binnenbeenlengte en kijkt bedenkelijk omhoog.",
+   "nep": [
+    "daar hoef ik geen extra stof voor te rekenen",
+    "het is hier ook wel koud"
+   ]
+  },
+  {
+   "id": "c20",
+   "titel": "Gekrompen pak",
+   "wolkjes": [
+    "Pink Panic",
+    "Captain Coaster"
+   ],
+   "prompt": "Next to a tumble dryer, Pink Panic holds up Captain Coaster's blue suit, which has shrunk to doll size. Captain Coaster stands beside her wearing only a towel, his eye mask and cape, looking horrified.",
+   "tekst": "Pink Panic houdt het pak van Captain Coaster omhoog. Het is in de droger gekrompen tot poppenformaat. Hij staat erbij in een handdoek.",
+   "nep": [
+    "nu past hij eindelijk bij de inhoud",
+    "hij was altijd al strak"
+   ]
+  },
+  {
+   "id": "c21",
+   "titel": "Douanecontrole",
+   "wolkjes": [
+    "Beveiliger",
+    "Captain Coaster"
+   ],
+   "prompt": "Airport security. Captain Coaster's utility belt goes through the scanner. A security guard looks at the scanner monitor, which faces away from the viewer, and smirks while beckoning a colleague. Captain Coaster stands with his arms up, blushing.",
+   "tekst": "Douanecontrole. De riem van Captain Coaster gaat door de scanner. De beveiliger grijnst naar het scherm en roept een collega.",
+   "nep": [
+    "Henk, kom eens kijken wat meneer bij zich heeft",
+    "dat is voor noodgevallen"
+   ]
+  },
+  {
+   "id": "c22",
+   "titel": "Speech op de bruiloft",
+   "wolkjes": [
+    "Captain Coaster"
+   ],
+   "prompt": "A wedding dinner. Captain Coaster stands at the table giving a toast, raising his glass with a big grin. The bride stares at him in horror, the groom hides his face in his hands, a grandmother in the background drops her fork.",
+   "tekst": "Een bruiloft. Captain Coaster geeft een speech en heft zijn glas. De bruid kijkt vol afschuw, de bruidegom verstopt zijn gezicht.",
+   "nep": [
+    "en dan nu het verhaal van de bruid en mij in de bezemkast"
+   ]
+  },
+  {
+   "id": "c23",
+   "titel": "Blind date met de vijand",
+   "wolkjes": [
+    "Captain Coaster",
+    "Doctor Fake"
+   ],
+   "prompt": "A sunny cafe terrace with a parasol. Captain Coaster and Doctor Fake the robot sit across from each other at a small table for two, each holding a single rose, staring at each other in shocked recognition. Two glasses of beer on round coasters stand between them.",
+   "tekst": "Een terras in de zon. Captain Coaster en Doctor Fake zitten tegenover elkaar, allebei met een roos. Blind date.",
+   "nep": [
+    "jij bent dus SpannendeVent88",
+    "en jij ziet er anders uit dan op je foto"
+   ]
+  },
+  {
+   "id": "c24",
+   "titel": "Door de slaapkamermuur",
+   "wolkjes": [
+    "Vrouw in bed",
+    "Captain Coaster"
+   ],
+   "prompt": "Captain Coaster has just crashed through a bedroom wall, half his body sticking through a hole in the bricks, dust flying. In the bed in front of him a middle-aged couple pulls the blanket up to their chins, the woman glaring, the man waving awkwardly.",
+   "tekst": "Captain Coaster is dwars door een slaapkamermuur gevlogen. Het echtpaar in bed trekt het dekbed op.",
+   "nep": [
+    "je had ook kunnen aanbellen",
+    "ga rustig door, ik zag niks"
+   ]
+  }
+ ]
+}
