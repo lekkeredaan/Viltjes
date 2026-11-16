@@ -1,18 +1,133 @@
 {
   "stijl": "Square old-school internet meme template image, drawn in vintage pop-art comic style: bold black ink outlines, flat colours with Ben-Day halftone dots, slightly off-register print. Strict limited palette: ultramarine blue, sunny yellow, bubblegum pink, cream white, black. One character only, shown waist-up or as a big close-up, centered, with one very clear, exaggerated facial expression, like a classic reaction meme. Background: a single flat colour with a soft halftone sunburst, nothing else. The top 25% and bottom 25% of the image must be calm and empty background so big meme text can be placed there later; the face sits in the middle. Original character only, not resembling any existing meme, photo or superhero. Characters: CAPTAIN COASTER, a slightly chubby, overconfident male superhero in an ultramarine suit with a yellow cape, yellow eye mask and a plain round yellow disc on his chest, short dark brown side-parted hair; PINK PANIC, a sharp, unimpressed female superhero in a bubblegum pink suit with a pink eye mask and short black hair; DOCTOR FAKE, a clunky boxy retro robot with antenna, round eyes and a pink metal body. Absolutely no text, no letters, no numbers, no captions, no logos, no signature, no frame.",
-  "klaar": [],
+  "klaar": [
+    "m01",
+    "m02",
+    "m03",
+    "m04",
+    "m05",
+    "m06"
+  ],
   "memes": [
-    { "id": "m01", "titel": "Slimme Coaster", "tekst": "Captain Coaster tikt met een sluwe grijns tegen zijn slaap: hij heeft een geniaal plan.", "prompt": "Captain Coaster in close-up, tapping his temple with one finger, sly smug grin, eyebrows raised, as if he just had a genius but terrible idea.", "nep": ["kan nooit een kater krijgen", "als je gewoon nooit nuchter wordt"] },
-    { "id": "m02", "titel": "Trotse Coaster", "tekst": "Captain Coaster balt trots zijn vuist: het is hem eindelijk gelukt.", "prompt": "Captain Coaster waist-up, clenching one fist in triumph in front of his chest, chin up, proud determined smirk, as if he just achieved something small but huge to him.", "nep": ["eindelijk haar nummer gekregen", "blijkt de pizzeria te zijn"] },
-    { "id": "m03", "titel": "Pink Panic is niet onder de indruk", "tekst": "Pink Panic slaat haar armen over elkaar en rolt met haar ogen.", "prompt": "Pink Panic waist-up, arms crossed, rolling her eyes, mouth pressed flat, deeply unimpressed.", "nep": ["noemt zichzelf een beest in bed", "slaapt na vier minuten"] },
-    { "id": "m04", "titel": "Doctor Fake twijfelt", "tekst": "Doctor Fake kijkt met half dichtgeknepen ogen achterdochtig opzij.", "prompt": "Doctor Fake the robot in close-up, squinting suspiciously sideways with one eye narrowed, antenna slightly bent, unsure what to think.", "nep": ["weet niet of ze met me flirt", "of dat ik de enige met een aansteker ben"] },
-    { "id": "m05", "titel": "Geschrokken Coaster", "tekst": "Captain Coaster slaat zijn handen tegen zijn wangen, ogen wijd open van schrik.", "prompt": "Captain Coaster close-up, both hands pressed against his cheeks, eyes wide, mouth open in horror, sweat drops flying.", "nep": ["legt telefoon op tafel", "scherm springt aan"] },
-    { "id": "m06", "titel": "Pech-Coaster", "tekst": "Captain Coaster steekt zwetend zijn duim op met een veel te brede, ongemakkelijke glimlach.", "prompt": "Captain Coaster waist-up, giving an awkward thumbs up, forced too-wide smile, sweating, one eye twitching, as if everything just went wrong.", "nep": ["stuurt ik mis je naar zijn ex", "in de familie-app"] },
-    { "id": "m07", "titel": "Duivelse Pink Panic", "tekst": "Pink Panic glimlacht duivels en tikt met haar vingertoppen tegen elkaar.", "prompt": "Pink Panic waist-up, evil satisfied smile, fingertips pressed together in a scheming pose, one eyebrow raised.", "nep": ["laat hem de hele avond betalen", "gaat met zijn beste vriend naar huis"] },
-    { "id": "m08", "titel": "Doctor Fake kijkt om", "tekst": "Doctor Fake draait zijn hoofd verlekkerd om naar iets buiten beeld.", "prompt": "Doctor Fake the robot waist-up, turning his head back over his shoulder, looking at something off-screen with heart-shaped lights in his eyes, very interested, slightly guilty.", "nep": ["zegt dat hij alleen even kijkt", "heeft haar al drie keer geappt"] },
-    { "id": "m09", "titel": "Huilende Coaster", "tekst": "Captain Coaster huilt dikke tranen met trillende onderlip.", "prompt": "Captain Coaster close-up, crying dramatically with big streaming tears, trembling lower lip, clutching his cape like a tissue.", "nep": ["zei ik ben er klaar voor", "ze bedoelde de afwas"] },
-    { "id": "m10", "titel": "Relaxte Pink Panic", "tekst": "Pink Panic ligt ontspannen met zonnebril en een cocktail met rietje.", "prompt": "Pink Panic waist-up, completely relaxed, sunglasses pushed on her nose, sipping a cocktail through a straw, calm half smile.", "nep": ["date zit al twintig minuten op de wc", "bestelt nog een rondje op zijn rekening"] },
-    { "id": "m11", "titel": "Stoere Doctor Fake", "tekst": "Doctor Fake zet stoer een zonnebril op met een zelfverzekerde grijns.", "prompt": "Doctor Fake the robot waist-up, putting on dark sunglasses with one hand, cocky confident grin, chest out.", "nep": ["zegt dat hij op batterijen werkt", "gaat de hele nacht door"] },
-    { "id": "m12", "titel": "Verbijsterde Coaster", "tekst": "Captain Coaster haalt zijn schouders op met een verwarde blik en beide handen omhoog.", "prompt": "Captain Coaster waist-up, both palms up in a confused shrug, head tilted, baffled frown, completely lost.", "nep": ["zij vraagt of ik nog boven kom", "boven wat"] }
+    {
+      "id": "m01",
+      "titel": "Slimme Coaster",
+      "tekst": "Captain Coaster tikt met een sluwe grijns tegen zijn slaap: hij heeft een geniaal plan.",
+      "prompt": "Captain Coaster in close-up, tapping his temple with one finger, sly smug grin, eyebrows raised, as if he just had a genius but terrible idea.",
+      "nep": [
+        "kan nooit een kater krijgen",
+        "als je gewoon nooit nuchter wordt"
+      ]
+    },
+    {
+      "id": "m02",
+      "titel": "Trotse Coaster",
+      "tekst": "Captain Coaster balt trots zijn vuist: het is hem eindelijk gelukt.",
+      "prompt": "Captain Coaster waist-up, clenching one fist in triumph in front of his chest, chin up, proud determined smirk, as if he just achieved something small but huge to him.",
+      "nep": [
+        "eindelijk haar nummer gekregen",
+        "blijkt de pizzeria te zijn"
+      ]
+    },
+    {
+      "id": "m03",
+      "titel": "Pink Panic is niet onder de indruk",
+      "tekst": "Pink Panic slaat haar armen over elkaar en rolt met haar ogen.",
+      "prompt": "Pink Panic waist-up, arms crossed, rolling her eyes, mouth pressed flat, deeply unimpressed.",
+      "nep": [
+        "noemt zichzelf een beest in bed",
+        "slaapt na vier minuten"
+      ]
+    },
+    {
+      "id": "m04",
+      "titel": "Doctor Fake twijfelt",
+      "tekst": "Doctor Fake kijkt met half dichtgeknepen ogen achterdochtig opzij.",
+      "prompt": "Doctor Fake the robot in close-up, squinting suspiciously sideways with one eye narrowed, antenna slightly bent, unsure what to think.",
+      "nep": [
+        "weet niet of ze met me flirt",
+        "of dat ik de enige met een aansteker ben"
+      ]
+    },
+    {
+      "id": "m05",
+      "titel": "Geschrokken Coaster",
+      "tekst": "Captain Coaster slaat zijn handen tegen zijn wangen, ogen wijd open van schrik.",
+      "prompt": "Captain Coaster close-up, both hands pressed against his cheeks, eyes wide, mouth open in horror, sweat drops flying.",
+      "nep": [
+        "legt telefoon op tafel",
+        "scherm springt aan"
+      ]
+    },
+    {
+      "id": "m06",
+      "titel": "Pech-Coaster",
+      "tekst": "Captain Coaster steekt zwetend zijn duim op met een veel te brede, ongemakkelijke glimlach.",
+      "prompt": "Captain Coaster waist-up, giving an awkward thumbs up, forced too-wide smile, sweating, one eye twitching, as if everything just went wrong.",
+      "nep": [
+        "stuurt ik mis je naar zijn ex",
+        "in de familie-app"
+      ]
+    },
+    {
+      "id": "m07",
+      "titel": "Duivelse Pink Panic",
+      "tekst": "Pink Panic glimlacht duivels en tikt met haar vingertoppen tegen elkaar.",
+      "prompt": "Pink Panic waist-up, evil satisfied smile, fingertips pressed together in a scheming pose, one eyebrow raised.",
+      "nep": [
+        "laat hem de hele avond betalen",
+        "gaat met zijn beste vriend naar huis"
+      ]
+    },
+    {
+      "id": "m08",
+      "titel": "Doctor Fake kijkt om",
+      "tekst": "Doctor Fake draait zijn hoofd verlekkerd om naar iets buiten beeld.",
+      "prompt": "Doctor Fake the robot waist-up, turning his head back over his shoulder, looking at something off-screen with heart-shaped lights in his eyes, very interested, slightly guilty.",
+      "nep": [
+        "zegt dat hij alleen even kijkt",
+        "heeft haar al drie keer geappt"
+      ]
+    },
+    {
+      "id": "m09",
+      "titel": "Huilende Coaster",
+      "tekst": "Captain Coaster huilt dikke tranen met trillende onderlip.",
+      "prompt": "Captain Coaster close-up, crying dramatically with big streaming tears, trembling lower lip, clutching his cape like a tissue.",
+      "nep": [
+        "zei ik ben er klaar voor",
+        "ze bedoelde de afwas"
+      ]
+    },
+    {
+      "id": "m10",
+      "titel": "Relaxte Pink Panic",
+      "tekst": "Pink Panic ligt ontspannen met zonnebril en een cocktail met rietje.",
+      "prompt": "Pink Panic waist-up, completely relaxed, sunglasses pushed on her nose, sipping a cocktail through a straw, calm half smile.",
+      "nep": [
+        "date zit al twintig minuten op de wc",
+        "bestelt nog een rondje op zijn rekening"
+      ]
+    },
+    {
+      "id": "m11",
+      "titel": "Stoere Doctor Fake",
+      "tekst": "Doctor Fake zet stoer een zonnebril op met een zelfverzekerde grijns.",
+      "prompt": "Doctor Fake the robot waist-up, putting on dark sunglasses with one hand, cocky confident grin, chest out.",
+      "nep": [
+        "zegt dat hij op batterijen werkt",
+        "gaat de hele nacht door"
+      ]
+    },
+    {
+      "id": "m12",
+      "titel": "Verbijsterde Coaster",
+      "tekst": "Captain Coaster haalt zijn schouders op met een verwarde blik en beide handen omhoog.",
+      "prompt": "Captain Coaster waist-up, both palms up in a confused shrug, head tilted, baffled frown, completely lost.",
+      "nep": [
+        "zij vraagt of ik nog boven kom",
+        "boven wat"
+      ]
+    }
   ]
 }
