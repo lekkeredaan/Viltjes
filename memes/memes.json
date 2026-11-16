@@ -6,7 +6,10 @@
     "m03",
     "m04",
     "m05",
-    "m06"
+    "m06",
+    "m08",
+    "m09",
+    "m11"
   ],
   "memes": [
     {
@@ -73,7 +76,7 @@
       "id": "m07",
       "titel": "Duivelse Pink Panic",
       "tekst": "Pink Panic glimlacht duivels en tikt met haar vingertoppen tegen elkaar.",
-      "prompt": "Pink Panic waist-up, evil satisfied smile, fingertips pressed together in a scheming pose, one eyebrow raised.",
+      "prompt": "Pink Panic waist-up, wearing her full bubblegum pink superhero costume with a high collar, white gloves and a yellow belt, clearly a fabric costume, evil satisfied smile, fingertips pressed together in a scheming pose, one eyebrow raised.",
       "nep": [
         "laat hem de hele avond betalen",
         "gaat met zijn beste vriend naar huis"
@@ -103,7 +106,7 @@
       "id": "m10",
       "titel": "Relaxte Pink Panic",
       "tekst": "Pink Panic ligt ontspannen met zonnebril en een cocktail met rietje.",
-      "prompt": "Pink Panic waist-up, completely relaxed, sunglasses pushed on her nose, sipping a cocktail through a straw, calm half smile.",
+      "prompt": "Pink Panic waist-up, wearing her full bubblegum pink superhero costume with a high collar and white gloves, clearly a fabric costume, completely relaxed, sunglasses pushed on her nose, sipping a cocktail through a straw, calm half smile.",
       "nep": [
         "date zit al twintig minuten op de wc",
         "bestelt nog een rondje op zijn rekening"
