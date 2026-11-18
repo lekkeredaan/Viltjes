@@ -143,7 +143,6 @@ function faseIn(el, key) {
 // ── Voorleesstem: de ingebouwde stem van de browser (gratis) ──────
 // Eén apparaat leest voor: de tv, of één telefoon als er geen tv is.
 // Elk viltje klinkt hetzelfde, ook dat van de computer, anders verraadt de stem hem.
-const STEM_KEY = 'vt.stem';
 const stem = {
   aan: false, voice: null, laatste: '',
   kan: () => 'speechSynthesis' in window && typeof window.SpeechSynthesisUtterance === 'function',
@@ -167,7 +166,6 @@ const stem = {
   zet(aan) {
     this.aan = !!aan && this.kan();
     this.laatste = '';
-    if (!window.VT_TV) storeSet(STEM_KEY, this.aan || null);
     if (!this.aan && this.kan()) speechSynthesis.cancel();
     stemKnoppen();
   },
@@ -176,7 +174,7 @@ function stemInit() {
   if (!stem.kan()) return;
   stem.kies();
   if (speechSynthesis.addEventListener) speechSynthesis.addEventListener('voiceschanged', () => { stem.kies(); stemKnoppen(); });
-  if (!window.VT_TV) stem.aan = !!storeGet(STEM_KEY);
+  // Altijd uit bij het laden: een telefoon mag pas praten na een tik
   const wissel = () => {
     const aan = !stem.aan;
     stem.zet(aan);
@@ -218,7 +216,8 @@ function voorlees() {
   if (game.status === 'lobby') {
     const ps = players();
     key = `lobby:${ps.length}`;
-    if (window.VT_TV && ps.length && stem.laatste.startsWith('lobby:')) t = `Welkom, ${ps[ps.length - 1][1].name}!`;
+    const was = stem.laatste.startsWith('lobby:') ? Number(stem.laatste.slice(6)) : null;
+    if (window.VT_TV && was !== null && ps.length > was) t = `Welkom, ${ps[ps.length - 1][1].name}!`;
   } else if (game.status === 'playing' && c) {
     const items = c.items || [];
     const it = items[c.shown];
@@ -789,7 +788,7 @@ function renderEinde() {
     });
     $('stapels').classList.add('stapels--klaar');
     $('na-stapels').hidden = false;
-    if (top > 0) { feest(90); stem.zeg(finalKop + '!'); }
+    if (top > 0) { feest(90); stem.zeg(winners.length > 1 ? `Gelijkspel! ${winners.map(w => w.name).join(' en ')} hebben de hoogste stapel.` : `${winners[0].name} heeft de hoogste stapel!`); }
   };
   if (key === eindeKey) return renderRest(ps);
   eindeKey = key;

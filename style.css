@@ -367,7 +367,7 @@ body.tv { overflow: hidden; }
 .tv-stem__kop { text-align: center; display: flex; flex-direction: column; gap: 6px; }
 .tv-stemvak { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 14px; max-width: 1190px; }
 .tv-stemvak .viltje { cursor: default; padding: 26px; }
-.tv-stemvak--plaatjes .kaartje { width: 220px !important; flex: none; }
+.tv-stemvak--plaatjes .kaartje { width: var(--kw, 220px) !important; flex: none; }
 .tv-stem .wacht { align-items: center; text-align: center; }
 .tv-stem .wie-klaar { justify-content: center; }
 

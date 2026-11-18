@@ -182,7 +182,7 @@ function tvStem(c, fase) {
   const vraag = c.type === 'cartoon' ? 'Welke cartoon is het grappigst?' : c.type === 'meme' ? 'Welke meme is het grappigst?' : c.type === 'achterkant' ? 'Welke vraag met antwoord is het grappigst?' : 'Welk viltje is het grappigst?';
   tvZet(fase, `<div class="tv-stem">
     <div class="tv-stem__kop"><h2 class="kop tv-kop">${vraag}</h2><p class="tv-sub">En welk viltje schreef de computer? Stem op je telefoon.</p></div>
-    <div class="stemvak tv-stemvak${regels ? ' tv-stemvak--plaatjes' : ''}">${items.map((it, i) => itemHtml(it, { size: items.length <= 5 ? 230 : items.length <= 8 ? 200 : 175, big: items.length <= 8, nr: String(i + 1) })).join('')}</div>
+    <div class="stemvak tv-stemvak${regels ? ' tv-stemvak--plaatjes' : ''}" style="--kw:${items.length <= 5 ? 220 : items.length <= 8 ? 190 : 160}px">${items.map((it, i) => itemHtml(it, { size: items.length <= 5 ? 230 : items.length <= 8 ? 200 : 175, big: items.length <= 8, nr: String(i + 1) })).join('')}</div>
     <div class="wacht"><span class="mono klein">WIE HEEFT GESTEMD</span><div id="tv-klaar"></div></div>
   </div>`);
   tvKlaar(players().map(p => p[0]));
