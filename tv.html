@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Viltjes op de tv · Ravotters</title>
+<meta name="description" content="Zet Viltjes op de tv: de hele tafel kijkt mee en een stem leest de viltjes voor.">
+<meta name="theme-color" content="#F6EFDF">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%232430C8'/%3E%3Ccircle cx='32' cy='32' r='25' fill='none' stroke='%23FFCB2E' stroke-width='2.5'/%3E%3Ctext x='32' y='42' font-family='Georgia,serif' font-weight='900' font-size='30' text-anchor='middle' fill='%23FAF5EA'%3EV%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Anton&family=Caveat:wght@700&family=Courier+Prime:wght@400;700&family=Figtree:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="tv">
+<svg class="korrel" aria-hidden="true"><filter id="korrel"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2"/><feColorMatrix values="0 0 0 0 0.55 0 0 0 0 0.45 0 0 0 0 0.3 0 0 0 0.25 0"/></filter><rect width="100%" height="100%" filter="url(#korrel)"/></svg>
+<div class="kring kring--1" aria-hidden="true"></div>
+<div class="kring kring--2" aria-hidden="true"></div>
+
+<!-- Iconen: lijntekeningen, geen emoji -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-voorlezer" viewBox="0 0 24 24"><path d="M3 10v4h3l7 4V6L6 10H3z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></symbol>
+    <symbol id="i-robot" viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="11" rx="3"/><path d="M12 4v4"/><circle cx="9.5" cy="13" r="1.2"/><circle cx="14.5" cy="13" r="1.2"/><path d="M10 16.5h4M3 12v3M21 12v3"/></symbol>
+    <symbol id="i-lach" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14a4.5 4.5 0 0 0 8 0z"/><path d="M9 9.5h.01M15 9.5h.01"/></symbol>
+    <symbol id="i-tijd" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M10 2h4"/></symbol>
+    <symbol id="i-pijl" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-terug" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+    <symbol id="i-draai" viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/></symbol>
+    <symbol id="i-vink" viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></symbol>
+    <symbol id="i-stem" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18.2 6.3a8 8 0 0 1 0 11.4"/></symbol>
+    <symbol id="i-stil" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></symbol>
+    <symbol id="i-tv" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="12.5" rx="2"/><path d="M8 21h8M12 17.5V21"/></symbol>
+  </defs>
+</svg>
+
+<!-- ═══════════ TV: kiezen welke tafel ═══════════ -->
+<section id="tv-start" class="tv-start">
+  <div class="tv-start__kaart">
+    <div class="vt land tv-start__logo" style="--r:-4deg" data-vorm="logo"><span class="vt__in slab logo-woord">Viltjes</span></div>
+    <h1 class="kop kop--groot">Viltjes op de tv</h1>
+    <p class="zacht">De tv laat zien wat er op tafel ligt en leest voor. Iedereen speelt gewoon op zijn eigen telefoon.</p>
+    <label class="veld">Tafelcode<input id="tv-code-in" class="invoer invoer--code" maxlength="6" autocapitalize="characters" autocomplete="off" placeholder="K7RZ2M"></label>
+    <label id="tv-stem-rij" class="vinkje"><input id="tv-stem-in" type="checkbox" checked> <span>Voorleesstem aan</span></label>
+    <button id="tv-kijk" class="knop">Kijk mee op de tv</button>
+    <p id="tv-fout" class="fout" hidden></p>
+    <p class="zacht klein">De tafelcode staat op de telefoon van wie de tafel opende. Viltjes is schunnig: alleen voor 18+.</p>
+  </div>
+</section>
+
+<!-- ═══════════ TV: het spel ═══════════ -->
+<div id="tv" class="tv-beeld" hidden>
+  <header class="tv-balk">
+    <div class="vt tv-balk__logo" data-vorm="logo"><span class="vt__in slab logo-woord">V</span></div>
+    <span id="ronde-nr" class="mono"></span>
+    <span class="tv-balk__rechts">
+      <span id="klok" class="klok mono" hidden><svg class="ico" aria-hidden="true"><use href="#i-tijd"/></svg><span></span></span>
+      <span class="tv-meedoen">Meedoen: <b>viltjes.ravotters.nl</b> · code <b id="tv-code" class="mono"></b></span>
+      <button id="stem-knop" class="stemknop" hidden aria-pressed="false" aria-label="Voorleesstem aan of uit"><svg class="ico" aria-hidden="true"><use href="#i-stil"/></svg></button>
+    </span>
+  </header>
+  <main id="tv-spel" class="tv-spel"></main>
+  <section id="s-einde" class="tv-einde" hidden>
+    <span class="mono klein" id="einde-sub"></span>
+    <h1 class="kop kop--groot" id="einde-kop"></h1>
+    <div id="stapels" class="stapels"></div>
+    <div id="stapel-namen" class="stapel-namen"></div>
+    <div id="na-stapels" class="na-stapels" hidden>
+      <div id="prijzen" class="prijzen"></div>
+      <div id="hist" hidden></div>
+    </div>
+    <button id="opnieuw" hidden></button>
+    <p id="opnieuw-wacht" class="zacht" hidden>Wie de tafel opende kan op zijn telefoon een nieuw potje starten.</p>
+  </section>
+</div>
+
+<div id="toast" class="toast" role="status" hidden></div>
+<script>window.VT_TV = true;</script>
+<script src="app.js"></script>
+<script src="tv.js"></script>
+</body>
+</html>

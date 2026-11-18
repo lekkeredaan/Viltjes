@@ -32,7 +32,8 @@ http.createServer(async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     return res.end(JSON.stringify(ok ? db.memGet(p) : { error: 'Permission denied' }));
   }
-  const file = path.join(__dirname, url.pathname === '/' ? 'index.html' : path.normalize(url.pathname).replace(/^([\/])+/, ''));
+  let file = path.join(__dirname, url.pathname === '/' ? 'index.html' : path.normalize(url.pathname).replace(/^([\/])+/, ''));
+  if (!path.extname(file) && fs.existsSync(file + '.html')) file += '.html';   // net als cleanUrls op Vercel: /tv -> tv.html
   if (!file.startsWith(__dirname) || !TYPES[path.extname(file)] || !fs.existsSync(file)) { res.statusCode = 404; return res.end('Niet gevonden'); }
   res.setHeader('Content-Type', TYPES[path.extname(file)]);
   res.setHeader('Cache-Control', 'no-store');

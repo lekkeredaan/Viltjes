@@ -28,6 +28,9 @@
     <symbol id="i-terug" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
     <symbol id="i-draai" viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/></symbol>
     <symbol id="i-vink" viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></symbol>
+    <symbol id="i-stem" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18.2 6.3a8 8 0 0 1 0 11.4"/></symbol>
+    <symbol id="i-stil" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></symbol>
+    <symbol id="i-tv" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="12.5" rx="2"/><path d="M8 21h8M12 17.5V21"/></symbol>
   </defs>
 </svg>
 
@@ -80,6 +83,7 @@
     <span id="lobby-code" class="codeblok__code"></span>
     <span class="klein">Lees hem voor of draai je scherm naar de tafel</span>
   </div>
+  <div class="tv-tip"><svg class="ico" aria-hidden="true"><use href="#i-tv"/></svg><span>Een tv in de buurt? Open <b>viltjes.ravotters.nl/tv</b> op de tv en typ deze code. Dan kijkt de hele tafel mee.</span></div>
   <div id="lobby-tafel" class="ronde-tafel"></div>
   <div id="lobby-host" hidden>
     <span class="label">Aantal rondes</span>
@@ -88,6 +92,7 @@
     </div>
     <p class="zacht klein">De laatste ronde is altijd: maak de cartoon af. Die telt dubbel.</p>
   </div>
+  <button id="stem-lobby" class="stemregel" hidden aria-pressed="false"><svg class="ico" aria-hidden="true"><use href="#i-stil"/></svg><span>Geen tv? Laat deze telefoon voorlezen</span></button>
   <p id="lobby-wacht" class="zacht" hidden>Wacht tot <b id="lobby-hostnaam"></b> het spel start.</p>
   <div class="onder">
     <button id="start" class="knop" hidden>Start het spel</button>
@@ -100,7 +105,8 @@
 <section id="s-spel" class="screen">
   <div class="balk">
     <span id="ronde-nr" class="mono klein"></span>
-    <span id="klok" class="klok mono" hidden><svg class="ico" aria-hidden="true"><use href="#i-tijd"/></svg><span></span></span>
+    <span class="balk__rechts"><span id="klok" class="klok mono" hidden><svg class="ico" aria-hidden="true"><use href="#i-tijd"/></svg><span></span></span>
+    <button id="stem-knop" class="stemknop" hidden aria-pressed="false" aria-label="Voorleesstem aan of uit"><svg class="ico" aria-hidden="true"><use href="#i-stil"/></svg></button></span>
   </div>
   <div id="spel"></div>
 </section>

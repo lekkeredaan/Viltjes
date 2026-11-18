@@ -110,6 +110,144 @@ const KLEUR = { wit: '#FFFDF8', zon: '#FFCB2E', roze: '#FF8FB8', blauw: '#2430C8
 const penSize = (t, big) => { const n = String(t || '').length; return big ? (n < 22 ? 34 : n < 40 ? 29 : n < 60 ? 25 : 22) : (n < 22 ? 25 : n < 40 ? 22 : n < 60 ? 19 : 17); };
 function stempel(txt, pos, rot) { return `<span class="stempel" style="${pos};--s:${rot}deg">${txt}</span>`; }
 
+// ── Feest: kleine viltjes die over het scherm dwarrelen ───────────
+const rustig = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function feest(n = 40) {
+  if (rustig()) return;
+  const box = document.createElement('div');
+  box.className = 'feest';
+  box.setAttribute('aria-hidden', 'true');
+  const kleuren = ['#FFCB2E', '#FF8FB8', '#2430C8', '#FFFDF8'];
+  const vormen = ['50%', '22%', '50% / 35%', '30%'];
+  let html = '';
+  for (let i = 0; i < n; i++) {
+    const w = 10 + Math.random() * 16;
+    html += `<i style="left:${Math.random() * 100}%;width:${w}px;height:${w}px;background:${kleuren[i % 4]};border-radius:${vormen[i % 4]};--x:${Math.round(Math.random() * 160 - 80)}px;--r:${Math.round(Math.random() * 900 - 450)}deg;animation-duration:${(1.8 + Math.random() * 1.6).toFixed(2)}s;animation-delay:${(Math.random() * .5).toFixed(2)}s"></i>`;
+  }
+  box.innerHTML = html;
+  document.body.appendChild(box);
+  setTimeout(() => box.remove(), 4200);
+}
+// Bij een nieuwe fase vliegt de inhoud binnen; daarna (bij elke poll) niet meer
+let faseKey = '';
+function faseIn(el, key) {
+  if (!el || key === faseKey) return;
+  faseKey = key;
+  el.classList.remove('fase-nieuw');
+  void el.offsetWidth;
+  el.classList.add('fase-nieuw');
+  clearTimeout(faseIn.t);
+  faseIn.t = setTimeout(() => el.classList.remove('fase-nieuw'), 1400);
+}
+
+// ── Voorleesstem: de ingebouwde stem van de browser (gratis) ──────
+// Eén apparaat leest voor: de tv, of één telefoon als er geen tv is.
+// Elk viltje klinkt hetzelfde, ook dat van de computer, anders verraadt de stem hem.
+const STEM_KEY = 'vt.stem';
+const stem = {
+  aan: false, voice: null, laatste: '',
+  kan: () => 'speechSynthesis' in window && typeof window.SpeechSynthesisUtterance === 'function',
+  kies() {
+    if (!this.kan()) return null;
+    const vs = speechSynthesis.getVoices().filter(v => /^nl([-_]|$)/i.test(v.lang));
+    const punt = v => (/google|natural|neural|online|premium|enhanced|siri/i.test(v.name) ? 2 : 0) + (/^nl[-_]NL/i.test(v.lang) ? 1 : 0);
+    this.voice = vs.sort((a, b) => punt(b) - punt(a))[0] || null;
+    return this.voice;
+  },
+  zeg(teksten) {
+    if (!this.aan || !this.kan()) return;
+    if (!this.voice && !this.kies()) return;   // geen Nederlandse stem: dan liever stil dan Engels
+    speechSynthesis.cancel();
+    [].concat(teksten).filter(Boolean).forEach(t => {
+      const u = new SpeechSynthesisUtterance(String(t));
+      u.voice = this.voice; u.lang = this.voice.lang; u.rate = 1; u.pitch = 1;
+      speechSynthesis.speak(u);
+    });
+  },
+  zet(aan) {
+    this.aan = !!aan && this.kan();
+    this.laatste = '';
+    if (!window.VT_TV) storeSet(STEM_KEY, this.aan || null);
+    if (!this.aan && this.kan()) speechSynthesis.cancel();
+    stemKnoppen();
+  },
+};
+function stemInit() {
+  if (!stem.kan()) return;
+  stem.kies();
+  if (speechSynthesis.addEventListener) speechSynthesis.addEventListener('voiceschanged', () => { stem.kies(); stemKnoppen(); });
+  if (!window.VT_TV) stem.aan = !!storeGet(STEM_KEY);
+  const wissel = () => {
+    const aan = !stem.aan;
+    stem.zet(aan);
+    if (aan) {
+      stem.zeg('Ik lees voor.');   // meteen iets zeggen: zo mag het apparaat daarna ook praten
+      if (!window.VT_TV) toast('Deze telefoon leest nu voor. Zet de stem op maar één telefoon aan.');
+      setTimeout(voorlees, 1200);
+    }
+  };
+  ['stem-knop', 'stem-lobby'].forEach(id => { const b = $(id); if (b) b.onclick = wissel; });
+  stemKnoppen();
+}
+function stemKnoppen() {
+  const kan = stem.kan() && !!stem.voice;
+  ['stem-knop', 'stem-lobby'].forEach(id => {
+    const b = $(id);
+    if (!b) return;
+    b.hidden = !kan;
+    b.setAttribute('aria-pressed', String(stem.aan));
+    b.classList.toggle('aan', stem.aan);
+    const u = b.querySelector('use');
+    if (u) u.setAttribute('href', stem.aan ? '#i-stem' : '#i-stil');
+    const t = b.querySelector('span');
+    if (t && !window.VT_TV) t.textContent = stem.aan ? 'Deze telefoon leest voor (tik om te stoppen)' : 'Geen tv? Laat deze telefoon voorlezen';
+  });
+}
+const viltjeTekst = it => !it ? '' : it.lines ? it.lines.join('. ') : (it.q ? `${it.q} ... ${it.text}` : it.text);
+function opdrachtTekst(c) {
+  if (c.type === 'cartoon') return `Maak de cartoon af. ${c.prompt?.tekst || ''} Deze ronde telt dubbel.`;
+  if (c.type === 'meme') return `Maak de meme. ${c.prompt?.tekst || ''}`;
+  if (c.type === 'achterkant') return `De Achterkant. ${c.prompt} Geef eerst een braaf antwoord.`;
+  return String(c.prompt || '');
+}
+// Wat moet er nu hardop? Alleen iets zeggen als er echt iets nieuws op tafel ligt.
+function voorlees() {
+  if (!stem.aan || !game) return;
+  const c = cur();
+  let key = '', t = null;
+  if (game.status === 'lobby') {
+    const ps = players();
+    key = `lobby:${ps.length}`;
+    if (window.VT_TV && ps.length && stem.laatste.startsWith('lobby:')) t = `Welkom, ${ps[ps.length - 1][1].name}!`;
+  } else if (game.status === 'playing' && c) {
+    const items = c.items || [];
+    const it = items[c.shown];
+    if (c.phase === 'schrijf') { key = `${c.n}:s`; t = [`Ronde ${c.n + 1}.`, opdrachtTekst(c)]; }
+    else if (c.phase === 'draai') { key = `${c.n}:d`; t = 'Draai de viltjes om, en schrijf er een schunnige vraag bij.'; }
+    else if (c.phase === 'lees' && it) {
+      const nr = `${metRegels(c.type) ? 'Nummer' : 'Viltje'} ${c.shown + 1}.`;
+      if (c.type === 'achterkant') { key = `${c.n}:l:${c.shown}:${!!c.om}`; t = c.om ? it.text : [nr, it.q]; }
+      else { key = `${c.n}:l:${c.shown}`; t = [nr, it.lines ? it.lines.join('. ') : it.text]; }
+    }
+    else if (c.phase === 'stem') { key = `${c.n}:v`; t = 'Stemmen maar! Wat is het grappigst, en welke is van de computer?'; }
+    else if (c.phase === 'uitslag') {
+      key = `${c.n}:u`;
+      const r = c.result || {};
+      if (r.leeg) t = 'Niemand heeft iets opgeschreven.';
+      else {
+        const win = items.find(i => i.id === r.win?.[0]), nep = items.find(i => i.id === r.aiId);
+        const w = win && r.wie?.[win.id];
+        const door = !w ? '' : c.type === 'achterkant' ? `${w.a} en ${w.v}` : w.v;
+        if (win && nep && win.id === nep.id) t = [`Raak! ${viltjeTekst(win)}.`, 'En die was van de computer!'];
+        else t = [win ? `Raak! ${viltjeTekst(win)}. Van ${door}.` : 'Niemand kreeg een stem.', nep ? `En deze was van de computer: ${viltjeTekst(nep)}.` : ''];
+      }
+    }
+  }
+  if (!key || key === stem.laatste) return;
+  stem.laatste = key;
+  if (t) stem.zeg(t);
+}
+
 // Een antwoord-viltje (of cartoon-kaartje) uit de lijst
 function itemHtml(it, { size = 150, kleur = 'wit', extra = '', tag = 'div', attrs = '', big = false, nr = '' } = {}) {
   if (it.lines) {
@@ -257,13 +395,16 @@ async function loadPrivate(force) {
 
 // ── Schermen kiezen ───────────────────────────────────────────────
 async function render() {
-  if (game.status === 'lobby') { renderLobby(); return showScreen('s-lobby'); }
+  stemKnoppen();
+  if (game.status === 'lobby') { renderLobby(); showScreen('s-lobby'); return voorlees(); }
   if (game.status === 'done') { renderEinde(); return showScreen('s-einde'); }
   await loadPrivate();
   renderSpel();
   showScreen('s-spel');
+  voorlees();
 }
 
+const lobbyGezien = new Set();
 function renderLobby() {
   view = ''; vote = { raak: null, nep: null };
   $('lobby-code').textContent = code;
@@ -273,7 +414,8 @@ function renderLobby() {
     const a = -Math.PI / 2 + (i / Math.max(ps.length, 1)) * Math.PI * 2;
     const x = 50 + Math.cos(a) * 41, y = 150 + Math.sin(a) * R - 34;
     const kleur = pid === me.pid ? 'zon' : (i % 3 === 1 ? 'wit' : 'wit');
-    return `<div class="speler" style="left:${x}%;top:${y}px"><div class="viltje viltje--${kleur}">${vorm(['rond', 'vier', 'acht', 'schulp'][i % 4], KLEUR[kleur])}<span>${esc(initials(p.name))}</span></div><span>${esc(p.name)}${pid === me.pid ? ' (jij)' : ''}</span></div>`;
+    const nieuw = !lobbyGezien.has(pid); lobbyGezien.add(pid);
+    return `<div class="speler${nieuw ? ' speler--nieuw' : ''}" style="left:${x}%;top:${y}px"><div class="viltje viltje--${kleur}">${vorm(['rond', 'vier', 'acht', 'schulp'][i % 4], KLEUR[kleur])}<span>${esc(initials(p.name))}</span></div><span>${esc(p.name)}${pid === me.pid ? ' (jij)' : ''}</span></div>`;
   }).join('');
   setHtml('lobby-tafel', `<div class="ronde-tafel__blad"><b>${ps.length}</b>aan tafel</div>${plekken}`);
   const host = isHost(), rounds = game.config?.rounds || 5;
@@ -293,13 +435,14 @@ function renderLobby() {
 function klok() {
   const c = cur();
   const el = $('klok');
+  if (!el) return;
   if (!c || !c.deadline || !['schrijf', 'draai', 'stem'].includes(c.phase)) { el.hidden = true; return; }
   const left = Math.max(0, Math.ceil((c.deadline - (Date.now() + offset)) / 1000));
   el.hidden = false;
   el.classList.toggle('klok--krap', left <= 10);
   el.querySelector('span').textContent = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}`;
   // Tijd om? Laat de server de fase afsluiten (die controleert zelf de klok)
-  if (left === 0 && Date.now() + offset > c.deadline + 1500) {
+  if (!window.VT_TV && left === 0 && Date.now() + offset > c.deadline + 1500) {
     const k = `${c.n}:${c.phase}`;
     if (k !== tikKey || Date.now() - tikAt > 4000) { tikKey = k; tikAt = Date.now(); api('tik').then(poll).catch(() => {}); }
   }
@@ -308,9 +451,16 @@ setInterval(klok, 500);
 
 const SOORT = { gewoon: '', achterkant: 'De Achterkant', meme: 'De meme', cartoon: 'De cartoon' };
 const metRegels = t => t === 'cartoon' || t === 'meme';
+let klaarGezien = { key: '', set: new Set() };
 function wieKlaar(list) {
-  const done = cur()?.done || {};
-  return `<div class="wie-klaar">${list.map(p => `<span class="${done[p] ? 'klaar' : ''}">${esc(nameOf(p))}</span>`).join('')}</div>`;
+  const c = cur(), done = c?.done || {};
+  const k = c ? `${c.n}:${c.phase}` : '';
+  if (klaarGezien.key !== k) klaarGezien = { key: k, set: new Set(list.filter(p => done[p])) };
+  return `<div class="wie-klaar">${list.map(p => {
+    const nieuw = done[p] && !klaarGezien.set.has(p);
+    if (done[p]) klaarGezien.set.add(p);
+    return `<span class="${done[p] ? 'klaar' : ''}${nieuw ? ' nieuw' : ''}">${esc(nameOf(p))}</span>`;
+  }).join('')}</div>`;
 }
 function voorlezerBalk(tekst) {
   return `<div class="voorlezer">${ico('i-voorlezer')}<span>${tekst}</span></div>`;
@@ -322,11 +472,12 @@ function renderSpel() {
   $('ronde-nr').textContent = `RONDE ${c.n + 1} VAN ${game.plan.length}${SOORT[c.type] ? ' · ' + SOORT[c.type].toUpperCase() : ''}`;
   klok();
   const key = `${c.n}:${c.phase}`;
-  if (c.phase === 'schrijf') return renderSchrijf(c, key);
-  if (c.phase === 'draai') return renderDraai(c, key);
-  if (c.phase === 'lees') return renderLees(c, key);
-  if (c.phase === 'stem') return renderStem(c, key);
-  if (c.phase === 'uitslag') return renderUitslag(c, key);
+  if (c.phase === 'schrijf') renderSchrijf(c, key);
+  else if (c.phase === 'draai') renderDraai(c, key);
+  else if (c.phase === 'lees') renderLees(c, key);
+  else if (c.phase === 'stem') renderStem(c, key);
+  else if (c.phase === 'uitslag') renderUitslag(c, key);
+  faseIn($('spel'), key);
 }
 
 function opdrachtViltje(tekst, kleur = 'blauw') {
@@ -470,7 +621,7 @@ function renderLees(c, key) {
       ? `<b>Lees voor.</b> Lees ${c.type === 'achterkant' ? 'eerst de vraag, draai het viltje om en lees dan het antwoord' : 'elk viltje hardop en met gevoel'}.`
       : `<b>${esc(nameOf(c.reader))} leest voor.</b> Kijk op van je scherm en luister.`);
     if (!metRegels(c.type) && c.type !== 'achterkant') html += `<p class="kop" style="font-size:17px">${esc(c.prompt)}</p>`;
-    html += `<div style="display:flex;justify-content:center;padding:8px 0">${bigItem(it, c.om)}</div>`;
+    html += `<div class="lees-in" style="display:flex;justify-content:center;padding:8px 0">${bigItem(it, c.om)}</div>`;
     html += `<p class="mono klein" style="text-align:center">VILTJE ${c.shown + 1} VAN ${items.length}</p>`;
     if (lezer) {
       const laatste = c.shown >= items.length - 1;
@@ -590,13 +741,14 @@ function renderUitslag(c, key) {
     const gesnapt = r.snapped || [], erin = r.fooled || [];
     const lijst = a => a.length <= 1 ? a.join('') : a.slice(0, -1).join(', ') + ' en ' + a[a.length - 1];
     html += `<p style="margin:0;color:var(--tekst);font-size:15px">${nep ? `<b>Viltje ${items.indexOf(nep) + 1} was van de computer.</b> ` : ''}${gesnapt.length ? `${esc(lijst(gesnapt))} ${gesnapt.length === 1 ? 'had hem' : 'hadden hem'} door.` : 'Niemand had hem door.'}${erin.length ? ` ${esc(lijst(erin))} ${erin.length === 1 ? 'trapte' : 'trapten'} erin.` : ''}${r.gok ? ` ${esc(nameOf(c.reader))} gokte de winnaar ${r.gok.ok ? 'goed' : 'fout'}.` : ''}</p>`;
-    html += `<div class="bon"><span class="bon__kop">** DE REKENING${r.mult > 1 ? ' x2' : ''} **</span>${(r.bon || []).map(b => `<div class="bon__regel${b.pid === me.pid ? ' bon__regel--ik' : ''}"><b>${esc(b.pid === me.pid ? 'Jij' : b.name)}</b><span class="bon__wat">${esc(b.wat)}</span><i></i><b>+${b.pts}</b></div>`).join('')}</div>`;
+    html += `<div class="bon"><span class="bon__kop">** DE REKENING${r.mult > 1 ? ' x2' : ''} **</span>${(r.bon || []).map((b, i) => `<div style="--i:${i}" class="bon__regel${b.pid === me.pid ? ' bon__regel--ik' : ''}"><b>${esc(b.pid === me.pid ? 'Jij' : b.name)}</b><span class="bon__wat">${esc(b.wat)}</span><i></i><b>+${b.pts}</b></div>`).join('')}</div>`;
     html += `<details class="terug"><summary class="tekstknop" style="text-decoration:underline;cursor:pointer">Wie schreef wat?</summary><div class="wie-schreef">${items.map((it, i) => `<div><span class="mono klein">${i + 1}</span><span class="pen">${esc(it.q ? it.q + ' ' : '')}${esc(it.lines ? it.lines.join(' / ') : it.text)}</span><span class="klein">${door(it.id)}</span></div>`).join('')}</div></details>`;
   }
   html += `<div class="onder">${magVerder
     ? `<button id="verder" class="knop">${volgende ? `Verder: ${esc(volgende)} leest voor` : 'Naar de eindstand'} ${ico('i-pijl')}</button>`
     : `<p class="zacht" style="text-align:center">${esc(nameOf(c.reader))} tikt zo op verder.</p><button id="verder" class="tekstknop" hidden>Zelf verder</button>`}</div>`;
   setHtml('spel', html);
+  if (!r.leeg && r.win?.length) setTimeout(() => feest(45), 300);
   const btn = $('verder');
   btn.onclick = () => busy(btn, async () => { await api('verder', { n: c.n }); await poll(); });
   // Blijft de Voorlezer hangen? Na een minuut mag iedereen door.
@@ -637,6 +789,7 @@ function renderEinde() {
     });
     $('stapels').classList.add('stapels--klaar');
     $('na-stapels').hidden = false;
+    if (top > 0) { feest(90); stem.zeg(finalKop + '!'); }
   };
   if (key === eindeKey) return renderRest(ps);
   eindeKey = key;
@@ -696,5 +849,5 @@ function initButtons() {
   $('naar-huis').onclick = () => leaveToHome();
 }
 
-initHome();
-initButtons();
+stemInit();
+if (!window.VT_TV) { initHome(); initButtons(); }
