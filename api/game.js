@@ -511,6 +511,21 @@ const actions = {
     return {};
   },
 
+  // De spelleider wacht niet langer: sluit schrijven, omdraaien of stemmen nu af.
+  // Wie nog niet klaar was, doet deze ronde niet mee (net als wanneer de tijd om is).
+  async skip(body) {
+    const { code, game, vault, isHost } = await load(body);
+    const cur = game.cur;
+    need(isHost, 'Alleen de spelleider kan overslaan.', 403);
+    need(game.status === 'playing' && cur, 'Er is nu niets om over te slaan.');
+    need(Number(body.n) === cur.n && body.phase === cur.phase, 'Dat is al voorbij.');
+    if (cur.phase === 'schrijf') await closeWrite(code, game, vault);
+    else if (cur.phase === 'draai') await closeDraai(code, game, vault);
+    else if (cur.phase === 'stem') await closeVote(code, game, vault);
+    else throw new Oops('Hier valt niets over te slaan.');
+    return {};
+  },
+
   // Naar de volgende ronde, of naar de eindstand
   async verder(body) {
     const { code, pid, game, vault, isHost } = await load(body);

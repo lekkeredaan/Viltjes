@@ -140,7 +140,7 @@ function tvSchrijf(c, fase) {
     <div class="tv-twee__links">${regels ? `<div class="tv-cartoon">${cartoonHtml(c.prompt, null)}</div>` : `<div class="tv-groot">${opdrachtViltje(c.prompt)}</div>`}</div>
     <div class="tv-twee__rechts">
       <h2 class="kop tv-kop">${regels ? (c.type === 'meme' ? 'Maak de meme' : 'Maak de cartoon af') : 'Pak je telefoon en schrijf'}</h2>
-      <p class="tv-sub">${uitleg}</p>
+      <div class="tv-uitleg">${rondeUitleg(c.type, true)}</div>
       <div class="wacht"><span class="mono klein">WIE IS KLAAR</span><div id="tv-klaar"></div></div>
     </div></div>`);
   tvKlaar(c.writers || []);

@@ -477,11 +477,82 @@ function renderSpel() {
   else if (c.phase === 'stem') renderStem(c, key);
   else if (c.phase === 'uitslag') renderUitslag(c, key);
   faseIn($('spel'), key);
+  overslaanKnop(c);
 }
 
 function opdrachtViltje(tekst, kleur = 'blauw') {
   const n = tekst.length, fs = n < 50 ? 24 : n < 75 ? 21 : 19;
   return `<div class="viltje opdracht" style="width:290px;height:290px;transform:rotate(-2deg)">${vorm('rond', KLEUR[kleur])}<span class="kop" style="font-size:${fs}px">${esc(tekst)}</span></div>`;
+}
+
+// ── Zo werkt deze ronde: uitleg met een voorbeeld ─────────────────
+// De eerste keer dat een soort ronde langskomt staat de uitleg open, daarna dicht (tik om te lezen).
+const RONDE_UITLEG = {
+  gewoon: {
+    naam: 'Het Viltje',
+    stappen: ['Iedereen behalve de Voorlezer schrijft een kort, grappig antwoord op de opdracht.', 'De computer schrijft stiekem ook een viltje.', 'Stem op het grappigste viltje en zoek welk viltje van de computer is.'],
+    voorbeeld: () => `<div class="vb-rij"><div class="vb-opdracht">Wat roep je als de barbecue niet aan wil?</div>${ico('i-pijl')}${vbViltje('Hij wil eerst even voorspel', 'rond', -4)}</div>`,
+  },
+  achterkant: {
+    naam: 'De Achterkant',
+    stappen: ['Stap 1: iedereen geeft een braaf, eerlijk antwoord op een gewone vraag.', 'Stap 2: je krijgt het viltje van iemand anders. Draai het om en verzin er een schunnige vraag bij.', 'Zo krijgt een braaf antwoord ineens een foute betekenis.'],
+    voorbeeld: () => `<div class="vb-rij"><div class="vb-opdracht">Hoe vaak ga jij naar de sportschool?</div>${ico('i-pijl')}${vbViltje('Twee keer per week, maar nooit lang', 'vier', -3)}</div>
+      <div class="vb-rij"><span class="vb-label">omgedraaid:</span>${vbViltje('Hoe vaak doen jullie het nog?', 'vier', 3, true)}</div>`,
+  },
+  meme: {
+    naam: 'De meme',
+    stappen: ['Iedereen behalve de Voorlezer zet tekst op hetzelfde plaatje: een bovenste en een onderste regel.', 'Boven zet je het op, onder komt de clou.', 'De computer maakt er ook een. Stem op de grappigste en zoek de nep.'],
+    voorbeeld: () => `<div class="vb-meme">${memeHtml({ id: 'm01', tekst: 'Captain Coaster tikt tegen zijn slaap' }, ['Kan nooit een kater krijgen', 'Als je gewoon nooit nuchter wordt'], true)}</div>`,
+  },
+  cartoon: {
+    naam: 'De cartoon',
+    stappen: ['Iedereen schrijft mee, ook de Voorlezer.', 'Vul de lege tekstwolkjes van de cartoon in.', 'Deze laatste ronde telt dubbel.'],
+    voorbeeld: () => `<div class="vb-wolkjes"><span class="vb-wolk">Zit dit pak niet te strak?</span><span class="vb-wolk vb-wolk--2">Nee joh, het pak is gewoon bang</span></div>`,
+  },
+};
+function vbViltje(tekst, v, rot, zon) {
+  return `<div class="viltje vb-viltje" style="transform:rotate(${rot}deg)">${vorm(v, zon ? KLEUR.zon : KLEUR.wit)}<span class="${zon ? 'slab' : 'pen'}">${esc(tekst)}</span></div>`;
+}
+const uitlegGezien = new Set();
+function rondeUitleg(type, open) {
+  const u = RONDE_UITLEG[type];
+  if (!u) return '';
+  return `<details class="uitleg"${open ? ' open' : ''}><summary><span class="mono klein">ZO WERKT ${u.naam.toUpperCase()}</span><span class="uitleg__pijl">${ico('i-pijl')}</span></summary>
+    <ol class="uitleg__stappen">${u.stappen.map(s => `<li>${esc(s)}</li>`).join('')}</ol>
+    <div class="uitleg__vb"><span class="mono klein">VOORBEELD</span>${u.voorbeeld()}</div></details>`;
+}
+// Uitleg direct onder de Voorlezer-balk zetten
+function metUitleg(html, c, klaar) {
+  const k = `${code}:${c.type}`;
+  const eerste = !uitlegGezien.has(k);
+  if (eerste && !klaar) uitlegGezien.add(k);
+  const blok = rondeUitleg(c.type, eerste && !klaar);
+  const i = html.indexOf('</div>');
+  return html.startsWith('<div class="voorlezer">') && i > 0 ? html.slice(0, i + 6) + blok + html.slice(i + 6) : blok + html;
+}
+
+// ── Overslaan: de spelleider hoeft niet eindeloos te wachten ──────
+function overslaanKnop(c) {
+  const oud = $('overslaan');
+  const mag = isHost() && (['schrijf', 'draai', 'stem'].includes(c.phase) || (c.phase === 'lees' && !amReader()));
+  if (!mag) { if (oud) oud.remove(); return; }
+  if (oud) return;
+  const tekst = c.phase === 'lees' ? 'Voorlezen overslaan: meteen stemmen' : 'Niet meer wachten: ga door';
+  $('spel').insertAdjacentHTML('beforeend', `<div class="overslaan" id="overslaan"><span class="klein zacht">Jij bent de spelleider.</span><button class="tekstknop" id="overslaan-knop">${tekst} ${ico('i-pijl')}</button></div>`);
+  const b = $('overslaan-knop');
+  let zeker = 0;
+  b.onclick = () => {
+    if (Date.now() - zeker > 4000) {
+      zeker = Date.now();
+      b.innerHTML = c.phase === 'lees' ? 'Zeker? Tik nog een keer' : 'Zeker? Wie nog niet klaar is doet deze ronde niet mee. Tik nog een keer';
+      return;
+    }
+    busy(b, async () => {
+      if (c.phase === 'lees') await api('open');
+      else await api('skip', { n: c.n, phase: c.phase });
+      await poll();
+    });
+  };
 }
 
 // 1. Schrijven
@@ -525,6 +596,7 @@ function renderSchrijf(c, key) {
           ${c.type === 'gewoon' ? '<p class="zacht klein">De computer schrijft ook een viltje. Lijkt dat van jou op dat van een robot? Dan krijg je bonuspunten.</p>' : ''}</div>`;
       }
     }
+    html = metUitleg(html, c, ingeleverd);
     if (ingeleverd) html += `<div class="wacht"><b>Je viltje ligt op tafel.</b><span class="zacht">Wachten op de rest:</span><div id="klaar"></div></div>`;
     else if (!schrijft && c.type !== 'cartoon') html += `<div class="wacht"><span class="zacht">Wie heeft al geschreven:</span><div id="klaar"></div></div>`;
     setHtml('spel', html);

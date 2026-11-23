@@ -406,3 +406,36 @@ body.tv { overflow: hidden; }
   .tv-draai .flip__binnen, .tv-uitslag__win > *, .tv-uitslag__nep, .tv-stand__regel { animation: none; }
 }
 .tv .viltje__q { font-size: 17px; }
+
+/* Zo werkt deze ronde */
+.uitleg { background: var(--vilt); border-radius: 8px; padding: 0 14px; color: var(--tekst); border: 2px solid var(--lijn); }
+.uitleg summary { list-style: none; display: flex; align-items: center; justify-content: space-between; min-height: 46px; cursor: pointer; color: var(--inkt); }
+.uitleg summary::-webkit-details-marker { display: none; }
+.uitleg__pijl .ico { transform: rotate(90deg); transition: transform .2s; }
+.uitleg[open] .uitleg__pijl .ico { transform: rotate(-90deg); }
+.uitleg__stappen { margin: 0 0 10px; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; font-size: 15px; line-height: 1.35; }
+.uitleg__vb { display: flex; flex-direction: column; gap: 8px; padding: 10px 0 14px; border-top: 1.5px dashed var(--lijn); }
+.vb-rij { display: flex; align-items: center; gap: 10px; }
+.vb-rij > .ico { color: var(--inkt); flex: none; }
+.vb-opdracht { flex: 1; font: 400 15px/1.2 var(--slab); color: var(--inkt); }
+.vb-label { flex: 1; font-size: 14px; color: var(--zacht); text-align: right; }
+.vb-viltje { width: 118px; height: 118px; padding: 20px; }
+.vb-viltje .pen { font-size: 19px; }
+.vb-viltje .slab { font-size: 13px; line-height: 1.15; color: var(--inkt); }
+.vb-meme { width: 210px; align-self: center; }
+.vb-wolkjes { display: flex; gap: 10px; flex-wrap: wrap; }
+.vb-wolk { position: relative; background: #fff; border: 2.5px solid #111; border-radius: 50% / 46%; padding: 10px 14px; font: 700 19px/1 var(--hand); color: #111; }
+.vb-wolk--2 { margin-left: auto; }
+.overslaan { display: flex; flex-direction: column; align-items: center; gap: 0; margin-top: 4px; padding-top: 8px; border-top: 1.5px dashed var(--lijn); text-align: center; }
+.overslaan .tekstknop { display: inline-flex; align-items: center; gap: 6px; color: var(--inkt); font-weight: 700; }
+.tv-uitleg .uitleg { border: 0; }
+.tv-uitleg .uitleg summary { pointer-events: none; }
+.tv-uitleg .uitleg__pijl { display: none; }
+.tv-uitleg .uitleg__stappen { font-size: 18px; }
+.tv-uitleg .uitleg__vb { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 12px; }
+.tv-uitleg .uitleg__vb > .mono { width: 100%; }
+.tv-uitleg .vb-rij { flex: 1 1 40%; }
+.tv-uitleg .vb-viltje { width: 104px; height: 104px; }
+.tv-uitleg .vb-opdracht { font-size: 17px; }
+.tv-twee__rechts:has(.tv-uitleg) { gap: 12px; }
+.tv-uitleg .vb-meme { width: 190px; align-self: flex-start; }
