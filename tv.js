@@ -51,6 +51,9 @@ function tvInit() {
     clearInterval(tvTimer);
     tvTimer = setInterval(tvPoll, POLL_MS);
   });
+  // Herladen: de code staat al in het adres, dus meteen weer meekijken. De stem mag pas na een tik,
+  // dus die staat dan uit (aanzetten kan met de luidspreker rechtsboven).
+  if (params.get('code') && inp.value.length === 6) { $('tv-stem-in').checked = false; $('tv-kijk').click(); }
 }
 
 async function tvPoll() {

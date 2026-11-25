@@ -274,7 +274,8 @@ const makerOf = (type, m) => (type === 'achterkant' ? m.back : m.front);
 async function closeVote(code, game, vault) {
   const cur = game.cur, n = cur.n, type = cur.type, mult = type === 'cartoon' ? 2 : 1;
   const map = vault.r?.map || {}, votes = vault.r?.votes || {};
-  const items = cur.items || [];
+  // Alleen viltjes die de server zelf op tafel legde tellen mee (de openbare stand kan door iedereen aangepast zijn)
+  const items = (Array.isArray(cur.items) ? cur.items : []).filter(i => i && map[i.id]);
   const ids = items.map(i => i.id);
   const aiId = ids.find(id => makerOf(type, map[id]) === 'ai') || null;
   const counts = Object.fromEntries(ids.map(id => [id, { r: 0, n: 0 }]));
@@ -368,7 +369,7 @@ const actions = {
     need(name, 'Vul een naam in.');
     const others = Object.values(game.players || {});
     need(others.length < MAX_PLAYERS, `Deze tafel zit vol (${MAX_PLAYERS} spelers).`);
-    need(!others.some(p => p.name.toLowerCase() === name.toLowerCase()), 'Die naam is al bezet. Kies een andere.');
+    need(!others.some(p => String(p?.name || '').toLowerCase() === name.toLowerCase()), 'Die naam is al bezet. Kies een andere.');
     await db.put(`games/${code}/players/${pid}`, { name, at: Date.now() });
     return { code, pid };
   },

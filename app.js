@@ -25,6 +25,9 @@ let view = '';                   // welk scherm staat er nu in #spel
 let vote = { raak: null, nep: null };
 let tikKey = '', tikAt = 0;
 let resumeOffer = null;
+let bladerAt = 0;                // laatste tik op vorige/volgende/stemmen (tegen dubbele tikken)
+let screenAt = 0;                // wanneer het huidige scherm verscheen (tegen een doorgeschoten dubbele tik)
+const netNieuw = () => Date.now() - screenAt < 1000;
 
 // ── Hulpjes ───────────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
@@ -37,7 +40,7 @@ function setHtml(el, html) {
 function showScreen(id) {
   const was = document.querySelector('.screen--active')?.id;
   document.querySelectorAll('.screen').forEach(s => s.classList.toggle('screen--active', s.id === id));
-  if (was !== id) window.scrollTo(0, 0);
+  if (was !== id) { window.scrollTo(0, 0); screenAt = Date.now(); }
 }
 let toastTimer = null;
 function toast(msg, bad) {
@@ -53,6 +56,10 @@ function genToken() {
   return [...a].map(b => b.toString(16).padStart(2, '0')).join('');
 }
 function storeGet(key) { try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch (e) { return null; } }
+// Zat dit tabblad net nog aan tafel? (sessionStorage overleeft herladen, maar geen nieuw tabblad)
+const TAB_KEY = 'vt.tab';
+function tabGet() { try { return sessionStorage.getItem(TAB_KEY) || ''; } catch (e) { return ''; } }
+function tabSet(c) { try { if (c) sessionStorage.setItem(TAB_KEY, c); else sessionStorage.removeItem(TAB_KEY); } catch (e) { /* geen opslag */ } }
 function storeSet(key, val) { try { if (val === null) localStorage.removeItem(key); else localStorage.setItem(key, JSON.stringify(val)); } catch (e) { /* geen opslag: het spel werkt gewoon */ } }
 
 async function fbGet(path) {
@@ -86,7 +93,8 @@ const nameOf = pid => game?.players?.[pid]?.name || 'Iemand';
 const isHost = () => !!game && game.hostId === me.pid;
 const cur = () => game?.cur || null;
 const amReader = () => cur()?.reader === me.pid;
-const initials = n => String(n).trim().split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
+// Per woord het eerste hele teken (een emoji bestaat uit twee "halve" tekens die niet uit elkaar mogen)
+const initials = n => Array.from(String(n ?? '').trim().split(/\s+/).map(w => Array.from(w)[0] || '').join('')).slice(0, 2).join('').toUpperCase();
 
 // ── Viltjes tekenen: vier vormen plus het logo ────────────────────
 const SCHULP = 'M92 50A12 12 0 0 1 86.4 71A12 12 0 0 1 71 86.4A12 12 0 0 1 50 92A12 12 0 0 1 29 86.4A12 12 0 0 1 13.6 71A12 12 0 0 1 8 50A12 12 0 0 1 13.6 29A12 12 0 0 1 29 13.6A12 12 0 0 1 50 8A12 12 0 0 1 71 13.6A12 12 0 0 1 86.4 29A12 12 0 0 1 92 50Z';
@@ -176,6 +184,7 @@ function stemInit() {
   if (speechSynthesis.addEventListener) speechSynthesis.addEventListener('voiceschanged', () => { stem.kies(); stemKnoppen(); });
   // Altijd uit bij het laden: een telefoon mag pas praten na een tik
   const wissel = () => {
+    if (netNieuw()) return;   // doorgeschoten tik van de knop die hier net nog stond
     const aan = !stem.aan;
     stem.zet(aan);
     if (aan) {
@@ -308,9 +317,11 @@ function initHome() {
     resumeOffer = last;
     $('resume-what').textContent = `Tafel ${last.code}, als ${last.name}`;
     $('resume-box').hidden = false;
+    // Herladen (of de telefoon laadt de pagina opnieuw): meteen terug aan tafel, zonder eerst te tikken
+    if (tabGet() === last.code && !(IS_DEV && params.get('als'))) setTimeout(() => resume(last).catch(() => tabSet('')), 0);
   }
   $('resume-ja').onclick = e => busy(e.currentTarget, () => resume(resumeOffer));
-  $('resume-nee').onclick = () => { storeSet(LAST_KEY, null); $('resume-box').hidden = true; };
+  $('resume-nee').onclick = () => { storeSet(LAST_KEY, null); tabSet(''); $('resume-box').hidden = true; };
 
   $('tafelcode').oninput = e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6); };
   $('aanschuiven').onclick = e => busy(e.currentTarget, async () => {
@@ -346,6 +357,7 @@ function enter(j, name) {
   me.pid = j.pid; code = j.code;
   storeSet(NAME_KEY, name);
   storeSet(LAST_KEY, { code, token: me.token, pid: me.pid, name, at: Date.now() });
+  tabSet(code);
   history.replaceState(null, '', location.pathname);
   startPolling();
   poll();
@@ -363,6 +375,7 @@ async function resume(s) {
 function leaveToHome() {
   stopPolling();
   storeSet(LAST_KEY, null);
+  tabSet('');
   code = ''; game = null; priv = null; privKey = ''; view = '';
   $('resume-box').hidden = true;
   showScreen('s-home');
@@ -390,6 +403,19 @@ async function loadPrivate(force) {
   if (!force && key === privKey) return;
   privKey = key;
   try { priv = await api('state'); } catch (e) { privKey = ''; }
+}
+
+// Wat je aan het typen bent overleeft herladen (alleen in dit tabblad, alleen voor deze ronde en fase)
+const CONCEPT_KEY = 'vt.concept';
+function concept(key) {
+  const velden = [...document.querySelectorAll('#spel textarea, #spel input')];
+  if (!velden.length) return;
+  const k = `${code}:${key}`;
+  let oud = null;
+  try { oud = JSON.parse(sessionStorage.getItem(CONCEPT_KEY) || 'null'); } catch (e) { /* geen opslag */ }
+  if (oud && oud.k === k) velden.forEach((v, i) => { if (oud.v[i] && !v.value) { v.value = oud.v[i]; v.dispatchEvent(new Event('input')); } });
+  const bewaar = () => { try { sessionStorage.setItem(CONCEPT_KEY, JSON.stringify({ k, v: velden.map(v => v.value) })); } catch (e) { /* geen opslag */ } };
+  velden.forEach(v => v.addEventListener('input', bewaar));
 }
 
 // ── Schermen kiezen ───────────────────────────────────────────────
@@ -605,6 +631,7 @@ function renderSchrijf(c, key) {
       const lines = [...document.querySelectorAll('[data-wolk]')].map(i => i.value.trim());
       setHtml('meme-voorbeeld', cartoonHtml(c.prompt, lines));
     });
+    concept(key);
     const btn = $('lever');
     if (btn) btn.onclick = () => busy(btn, async () => {
       if (metRegels(c.type)) {
@@ -655,6 +682,7 @@ function renderDraai(c, key) {
     if (f) setTimeout(() => f.classList.add('flip--om'), 900);
     const v = $('vraag');
     if (v) v.oninput = () => { $('vraag-voorbeeld').textContent = v.value.trim() || '...?'; };
+    concept(key);
     const btn = $('lever');
     if (btn) btn.onclick = () => busy(btn, async () => {
       const text = $('vraag').value.trim();
@@ -704,10 +732,13 @@ function renderLees(c, key) {
         </div></div>`;
     } else html += `<p class="zacht" style="text-align:center">Zo meteen stem je op het grappigste viltje en zoek je het viltje van de computer.</p>`;
     setHtml('spel', html);
-    const go = k2 => busy(null, async () => { await api('toon', { k: k2, om: false }); await poll(); });
+    // Na bladeren staat er meteen een nieuwe knop op dezelfde plek. Een dubbele tik zou dan een viltje overslaan
+    // (of meteen het stemmen openen), dus vlak na een tik telt een tweede tik niet.
+    const rust = () => { if (Date.now() - bladerAt < 700) return true; bladerAt = Date.now(); return false; };
+    const go = k2 => { if (rust()) return; busy(null, async () => { await api('toon', { k: k2, om: false }); await poll(); }); };
     if ($('vorige')) $('vorige').onclick = () => go(c.shown - 1);
-    if ($('volgende')) $('volgende').onclick = e => busy(e.currentTarget, async () => { await api('toon', { k: c.shown + 1, om: false }); await poll(); });
-    if ($('stemmen')) $('stemmen').onclick = e => busy(e.currentTarget, async () => { await api('open'); await poll(); });
+    if ($('volgende')) $('volgende').onclick = e => { if (rust()) return; busy(e.currentTarget, async () => { await api('toon', { k: c.shown + 1, om: false }); await poll(); }); };
+    if ($('stemmen')) $('stemmen').onclick = e => { if (rust()) return; busy(e.currentTarget, async () => { await api('open'); await poll(); }); };
     if ($('omdraai')) $('omdraai').onclick = e => busy(e.currentTarget, async () => {
       const om = !$('lees-flip').classList.contains('flip--om');
       $('lees-flip').classList.toggle('flip--om', om);
@@ -916,8 +947,9 @@ function initButtons() {
   });
   $('start').onclick = e => busy(e.currentTarget, async () => { await api('start'); view = ''; await poll(); });
   $('weg').onclick = e => busy(e.currentTarget, async () => { await api('leave'); leaveToHome(); });
-  $('opnieuw').onclick = e => busy(e.currentTarget, async () => { await api('opnieuw'); await poll(); });
-  $('naar-huis').onclick = () => leaveToHome();
+  // De eindstand verschijnt onder je vinger: een tweede tik van een dubbele tik op "Naar de eindstand" telt hier niet
+  $('opnieuw').onclick = e => { if (netNieuw()) return; busy(e.currentTarget, async () => { await api('opnieuw'); await poll(); }); };
+  $('naar-huis').onclick = () => { if (!netNieuw()) leaveToHome(); };
 }
 
 stemInit();

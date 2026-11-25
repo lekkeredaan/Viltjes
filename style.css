@@ -120,6 +120,8 @@ textarea.invoer { font: 700 25px/1.1 var(--hand); color: var(--pen); resize: non
 /* Opdracht-viltje bovenaan */
 .opdracht { align-self: center; color: #FAF5EA; padding: 44px; }
 .opdracht .kop { color: #FAF5EA; font-size: 23px; }
+/* Lange woorden (zoekgeschiedenis) mogen afbreken, anders steken ze bij grote letters buiten het viltje */
+.viltje .kop, .viltje .pen, .viltje__q { hyphens: auto; -webkit-hyphens: auto; overflow-wrap: anywhere; min-width: 0; max-width: 100%; }
 .voorlezer { margin-bottom: 4px; display: flex; align-items: center; gap: 10px; font-size: 15px; line-height: 1.35; border-bottom: 2px solid var(--inkt); padding-bottom: 10px; color: var(--tekst); }
 .voorlezer .ico { width: 26px; height: 26px; color: var(--inkt); }
 

@@ -3,5 +3,17 @@
   "trailingSlash": false,
   "regions": ["fra1"],
   "functions": { "api/game.js": { "maxDuration": 60 } },
-  "crons": [ { "path": "/api/cleanup", "schedule": "15 5 * * *" } ]
+  "crons": [ { "path": "/api/cleanup", "schedule": "15 5 * * *" } ],
+  "redirects": [
+    { "source": "/lib/:path*", "destination": "/", "permanent": false },
+    { "source": "/test/:path*", "destination": "/", "permanent": false },
+    { "source": "/cartoons/:file.json", "destination": "/", "permanent": false },
+    { "source": "/memes/:file.json", "destination": "/", "permanent": false },
+    { "source": "/dev-server", "destination": "/", "permanent": false },
+    { "source": "/dev-server.js", "destination": "/", "permanent": false },
+    { "source": "/database.rules", "destination": "/", "permanent": false },
+    { "source": "/database.rules.json", "destination": "/", "permanent": false },
+    { "source": "/firebase.json", "destination": "/", "permanent": false },
+    { "source": "/.firebaserc", "destination": "/", "permanent": false }
+  ]
 }
