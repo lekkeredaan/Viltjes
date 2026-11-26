@@ -15,5 +15,17 @@
     { "source": "/database.rules.json", "destination": "/", "permanent": false },
     { "source": "/firebase.json", "destination": "/", "permanent": false },
     { "source": "/.firebaserc", "destination": "/", "permanent": false }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), fullscreen=(self)" },
+        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'sha256-qlKTJHpMEjtRQnX1MA0odHOc6VKkzRCWQy8rRg1r6ao=' 'unsafe-hashes' 'sha256-9f8ZK5epjuMsYtXFjPqrgJI0L4QOAUYmJdHtT+RSH/c='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://viltjes-ravotters-default-rtdb.europe-west1.firebasedatabase.app; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'" }
+      ]
+    }
   ]
 }

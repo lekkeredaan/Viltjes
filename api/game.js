@@ -32,6 +32,8 @@ const MIN_PLAYERS = 3, MAX_PLAYERS = 10;
 const CODE_API = process.env.VT_CODE_API || 'https://www.ravotters.nl/api/codes/verify';
 const GAME_SLUG = 'viltjes';
 const MAX_AI_GAMES_PER_DAY = Number(process.env.VT_MAX_AI_GAMES_PER_DAY || 400);
+// Eén tafel mag niet de AI-pot van de hele dag opmaken: daarna speelt die tafel door met de vaste antwoorden
+const MAX_AI_GAMES_PER_TABLE = Number(process.env.VT_MAX_AI_GAMES_PER_TABLE || 10);
 const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const PLAN = {
   3: ['gewoon', 'achterkant', 'cartoon'],
@@ -409,8 +411,9 @@ const actions = {
     };
     // Niet twee keer achter elkaar dezelfde cartoon aan dezelfde tafel
     if (vault.lastCartoon === deck.cartoon) deck.cartoon = (deck.cartoon + 1) % CARTOONS.length;
-    const noAI = used >= MAX_AI_GAMES_PER_DAY;
-    await db.patch(db.vaultPath(code), { deck, noAI, lastCartoon: deck.cartoon, aiPrompts: null, ai: null, aiBack: null });
+    const tableToday = vault.startsDay === day ? (Number(vault.starts) || 0) : 0;
+    const noAI = used >= MAX_AI_GAMES_PER_DAY || tableToday >= MAX_AI_GAMES_PER_TABLE;
+    await db.patch(db.vaultPath(code), { deck, noAI, lastCartoon: deck.cartoon, aiPrompts: null, ai: null, aiBack: null, startsDay: day, starts: tableToday + 1 });
     const scores = Object.fromEntries(pids.map(p => [p, 0]));
     const fresh = { ...game, status: 'playing', plan, scores, stats: null, hist: null };
     await db.patch(`games/${code}`, { status: 'playing', plan, scores, stats: null, hist: null, startedAt: Date.now() });
